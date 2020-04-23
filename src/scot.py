@@ -78,10 +78,10 @@ def scot(X, y, k, e, XontoY=True):
     couplingM, log = stabilized_entropic_gromov_wasserstein(Cx, Cy, p, q, 'square_loss', epsilon=e, log=True, verbose=True)
 
     if XontoY==True:
-        X_transported = transport_data(X,y,gw,transposeCoupling=False)
+        X_transported = transport_data(X,y,couplingM,transposeCoupling=False)
         return X_transported, y
     else:
-        y_transported = transport_data(X,y,gw,transposeCoupling=True)
+        y_transported = transport_data(X,y,couplingM,transposeCoupling=True)
         return X, y_transported
 
 
