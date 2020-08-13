@@ -35,7 +35,7 @@ def stabilized_entropic_gromov_wasserstein(C1, C2, p, q, loss_fun, epsilon,
         # compute the gradient
         tens = gwggrad(constC, hC1, hC2, T)
 
-        T = sinkhorn(p, q, tens, epsilon, method = 'sinkhorn_epsilon_scaling')
+        T = sinkhorn(p, q, tens, epsilon, method = 'sinkhorn_stabilized')
 
         if cpt % 10 == 0:
             # we can speed up the process by checking for the error only all
