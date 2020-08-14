@@ -8,8 +8,8 @@ from ot.bregman import sinkhorn
 from ot.utils import dist, UndefinedParameter
 from ot.optim import cg
 from ot.gromov import init_matrix, gwggrad, gwloss
-from eval import *
-from utils import *
+import evaluation_metrics as em
+import utils as ut
 
 def stabilized_entropic_gromov_wasserstein(C1, C2, p, q, loss_fun, epsilon,
                                 max_iter = 1000, tol=1e-9, verbose=False, log=False):
@@ -66,11 +66,11 @@ def scot(X, y, k, e, XontoY=True):
     returns the resulting datasets after transport
     For transport in the opposite direction, set XontoY to False
     """
-    X=zscore_standardize(np.asarray(X))
-    y=zscore_standardize(np.asarray(y))
+    X=ut.zscore_standardize(np.asarray(X))
+    y=ut.zscore_standardize(np.asarray(y))
 
-    Cx=get_graph_distance_matrix(X, k, mode="distance") 
-    Cy=get_graph_distance_matrix(y, k, mode= "distance")
+    Cx=ut.get_graph_distance_matrix(X, k, mode="distance") 
+    Cy=ut.get_graph_distance_matrix(y, k, mode= "distance")
     X_sampleNo= Cx.shape[0]
     y_sampleNo= Cy.shape[0]
     p=ot.unif(X_sampleNo)
@@ -78,10 +78,10 @@ def scot(X, y, k, e, XontoY=True):
     couplingM, log = stabilized_entropic_gromov_wasserstein(Cx, Cy, p, q, 'square_loss', epsilon=e, log=True, verbose=True)
 
     if XontoY==True:
-        X_transported = transport_data(X,y,couplingM,transposeCoupling=False)
+        X_transported = ut.transport_data(X,y,couplingM,transposeCoupling=False)
         return X_transported, y
     else:
-        y_transported = transport_data(X,y,couplingM,transposeCoupling=True)
+        y_transported = ut.transport_data(X,y,couplingM,transposeCoupling=True)
         return X, y_transported
 
 
