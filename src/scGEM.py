@@ -1,4 +1,4 @@
-from scot import *
+import scot as sc
 
 
 # load data
@@ -10,10 +10,10 @@ k = 20
 eps =  .005
 
 # perform SCOT alignment
-X_transported, y_normalized = scot(X, y, k, eps)
+X_transported, y_normalized = sc.scot(X, y, k, eps)
 
 # evaluate results
-fracs, xs = get_fracs(X_transported, y_normalized)
+fracs, xs = em.get_fracs(X_transported, y_normalized)
 print("Average fraction of samples closer than true match is ", np.mean(fracs))
 
 
