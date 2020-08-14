@@ -1,4 +1,5 @@
 import scot as sc
+import numpy as np
 
 
 # load data
