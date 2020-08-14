@@ -1,6 +1,6 @@
 import scot as sc
 import numpy as np
-
+import evaluation_metrics as em
 
 # load data
 X = np.genfromtxt("../data/scGEM/Cheow_expression.csv", delimiter=',') #Row-formatted data; shape (#DataPoints x #Features)
