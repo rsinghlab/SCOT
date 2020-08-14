@@ -10,6 +10,7 @@ from ot.optim import cg
 from ot.gromov import init_matrix, gwggrad, gwloss
 import evaluation_metrics as em
 import utils as ut
+import numpy as np
 
 def stabilized_entropic_gromov_wasserstein(C1, C2, p, q, loss_fun, epsilon,
                                 max_iter = 1000, tol=1e-9, verbose=False, log=False):
