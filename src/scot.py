@@ -12,54 +12,6 @@ import evaluation_metrics as em
 import utils as ut
 import numpy as np
 
-def stabilized_entropic_gromov_wasserstein(C1, C2, p, q, loss_fun, epsilon,
-                                max_iter = 1000, tol=1e-9, verbose=False, log=False):
-
-
-    C1 = np.asarray(C1, dtype=np.float64)
-    C2 = np.asarray(C2, dtype=np.float64)
-
-    T = np.outer(p, q)  # Initialization
-
-    constC, hC1, hC2 = init_matrix(C1, C2, p, q, loss_fun)
-
-    cpt = 0
-    err = 1
-
-    if log:
-        log = {'err': []}
-
-    while (err > tol and cpt < max_iter):
-
-        Tprev = T
-
-        # compute the gradient
-        tens = gwggrad(constC, hC1, hC2, T)
-
-        T = sinkhorn(p, q, tens, epsilon, method = 'sinkhorn_stabilized')
-
-        if cpt % 10 == 0:
-            # we can speed up the process by checking for the error only all
-            # the 10th iterations
-            err = np.linalg.norm(T - Tprev)
-
-            if log:
-                log['err'].append(err)
-
-            if verbose:
-                if cpt % 200 == 0:
-                    print('{:5s}|{:12s}'.format(
-                        'It.', 'Err') + '\n' + '-' * 19)
-                print('{:5d}|{:8e}|'.format(cpt, err))
-
-        cpt += 1
-    
-    if log:
-        log['gw_dist'] = gwloss(constC, hC1, hC2, T)
-        return T, log
-    else:
-        return T
-
 def scot(X, y, k, e, XontoY=True):
     """
     Given two datasets (X and y) and 
@@ -76,7 +28,7 @@ def scot(X, y, k, e, XontoY=True):
     y_sampleNo= Cy.shape[0]
     p=ot.unif(X_sampleNo)
     q=ot.unif(y_sampleNo)
-    couplingM, log = stabilized_entropic_gromov_wasserstein(Cx, Cy, p, q, 'square_loss', epsilon=e, log=True, verbose=True)
+    couplingM, log = ot.gromov.entropic_gromov_wasserstein(Cx, Cy, p, q, 'square_loss', epsilon=e, log=True, verbose=True)
 
     if XontoY==True:
         X_transported = ut.transport_data(X,y,couplingM,transposeCoupling=False)
