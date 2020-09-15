@@ -34,7 +34,7 @@ def scot(X, y, k, e, XontoY=True):
     if (np.isnan(couplingM).any() or np.any(~couplingM.any(axis=1)) or np.any(~couplingM.any(axis=0)) or sum(sum(couplingM)) < .95):
         print("Did not converge. Try increasing epsilon. ")
         return 0
-    else
+    else:
         if XontoY==True:
             X_transported = ut.transport_data(X,y,couplingM,transposeCoupling=False)
             return X_transported, y
