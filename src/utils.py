@@ -1,5 +1,5 @@
 """
-Author: Pinar Demetci, Rebecca Santorella
+Authors: Pinar Demetci, Rebecca Santorella
 12 February 2020
 Utils for SCOT
 """
@@ -11,6 +11,28 @@ from sklearn.neighbors import kneighbors_graph
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.neighbors import NearestNeighbors, KNeighborsClassifier
 
+def unit_normalize(data, norm="l2", bySample=True):
+    """
+    Default norm used is l2-norm. Other options: "l1", and "max"
+    If bySample==True, then we independently normalize each sample. If bySample==False, then we independently normalize each feature
+    """
+    assert (norm in ["l1","l2","max"]), "Norm argument has to be either one of 'max', 'l1', or 'l2'."
+
+    if bySample==True:
+        axis=1
+    else:
+        axis=0
+
+    return normalize(data, norm=norm, axis=axis) 
+
+def zscore_standardize(data):
+    scaler=StandardScaler()
+    scaledData=scaler.fit_transform(data)
+    return scaledData
+
+def get_spatial_distance_matrix(data, metric="eucledian"):
+    Cdata= sp.spatial.distance.cdist(data,data,metric=metric)
+    return Cdata/Cdata.max()
 
 def get_graph_distance_matrix(data, num_neighbors, mode="distance", metric="minkowski"):
     """
@@ -31,30 +53,6 @@ def get_graph_distance_matrix(data, num_neighbors, mode="distance", metric="mink
 
     return shortestPath_data
 
-def get_spatial_distance_matrix(data, metric="eucledian"):
-    Cdata= sp.spatial.distance.cdist(data,data,metric=metric)
-    return Cdata/Cdata.max()
-
-def unit_normalize(data, norm="l2", bySample=True):
-    """
-    Default norm used is l2-norm. Other options: "l1", and "max"
-    If bySample==True, then we independently normalize each sample. If bySample==False, then we independently normalize each feature
-    """
-    assert (norm in ["l1","l2","max"]), "Norm argument has to be either one of 'max', 'l1', or 'l2'."
-
-    if bySample==True:
-        axis=1
-    else:
-        axis=0
-
-    return normalize(data, norm=norm, axis=axis)
-    
-
-def zscore_standardize(data):
-    scaler=StandardScaler()
-    scaledData=scaler.fit_transform(data)
-    return scaledData
-
 def transport_data(source, target, couplingMatrix, transposeCoupling=False):
     """
     Given: data in the target space, data in the source space, a coupling matrix learned via Gromow-Wasserstein OT
@@ -69,37 +67,4 @@ def transport_data(source, target, couplingMatrix, transposeCoupling=False):
         transported_data=np.matmul(couplingMatrix, source)*target.shape[0]
         
     return transported_data
-
-def create_probability_fromClasses(Xlabels, ylabels):
-    """
-    For datasets with known distribution of cell clusters
-    """
-    #Get counts of each class in X
-    unique, counts = np.unique(Xlabels, return_counts=True)
-    X_counts=dict(zip(unique, counts))
-
-    #Turn to class probabilities in X
-    factor=1.0/sum(X_counts.values())
-    for k in X_counts:
-      X_counts[k] = X_counts[k]*factor
-
-    #Get counts of each class in y
-    unique, counts = np.unique(ylabels, return_counts=True)
-    y_counts=dict(zip(unique, counts))
-    #Turn to class probabilities in y
-    factor=1.0/sum(y_counts.values())
-    for k in y_counts:
-      y_counts[k] = y_counts[k]*factor
-
-    Xprobs=[]
-    yprobs=[]
-    for i in Xlabels:
-      Xprobs.append(X_counts[i])
-    for i in ylabels:
-      yprobs.append(y_counts[i])
-    p=Xprobs/np.sum(Xprobs)
-    q=yprobs/np.sum(yprobs)
-
-    return p,q
-
 

@@ -2,7 +2,6 @@
 Author: Ritambhara Singh, Pinar Demetci, Rebecca Santorella
 19 February 2020
 """
-
 import numpy as np
 import random, math, os, sys
 import matplotlib.pyplot as plt
@@ -11,46 +10,37 @@ from sklearn.metrics import roc_auc_score, silhouette_samples
 from sklearn.decomposition import PCA
 
 def calc_frac_idx(x1_mat,x2_mat):
-    """
-    Returns fraction closer than true match for each sample (as an array)
-    """
-    fracs = []
-    x = []
-    nsamp = x1_mat.shape[0]
-    rank=0
-    for row_idx in range(nsamp):
-        euc_dist = np.sqrt(np.sum(np.square(np.subtract(x1_mat[row_idx,:], x2_mat)), axis=1))
-        true_nbr = euc_dist[row_idx]
-        sort_euc_dist = sorted(euc_dist)
-        rank =sort_euc_dist.index(true_nbr)
-        frac = float(rank)/(nsamp -1)
+	"""
+	Returns fraction closer than true match for each sample (as an array)
+	"""
+	fracs = []
+	x = []
+	nsamp = x1_mat.shape[0]
+	rank=0
+	for row_idx in range(nsamp):
+		euc_dist = np.sqrt(np.sum(np.square(np.subtract(x1_mat[row_idx,:], x2_mat)), axis=1))
+		true_nbr = euc_dist[row_idx]
+		sort_euc_dist = sorted(euc_dist)
+		rank =sort_euc_dist.index(true_nbr)
+		frac = float(rank)/(nsamp -1)
 
-        fracs.append(frac)
-        x.append(row_idx+1)
+		fracs.append(frac)
+		x.append(row_idx+1)
 
-    return fracs,x
+	return fracs,x
 
-# get the fraction matched for all data points in both directions
-# averages the fractions in both directions for each data point
-def get_fracs(x1, x2):
-    frac1,xs = calc_frac_idx(x1, x2)
-    frac2,xs = calc_frac_idx(x2, x1)
-    frac = np.add(frac1,frac2) / 2
-    return frac, xs
-
-def transfer_accuracy(domain1, domain2, type1, type2, n):
-    """
-    Metric from UnionCom: "Label Transfer Accuracy"
-    """
-    knn = KNeighborsClassifier(n_neighbors=n)
-    knn.fit(domain2, type2)
-    type1_predict = knn.predict(domain1)
-    np.savetxt("type1_predict.txt", type1_predict)
-    count = 0
-    for label1, label2 in zip(type1_predict, type1):
-        if label1 == label2:
-            count += 1
-    return count / len(type1)
+def calc_domainAveraged_FOSCTTM(x1_mat, x2_mat):
+	"""
+	Outputs average FOSCTTM measure (averaged over both domains)
+	Get the fraction matched for all data points in both directions
+	Averages the fractions in both directions for each data point
+	"""
+	fracs1,xs = calc_frac_idx(x1_mat, x2_mat)
+	fracs2,xs = calc_frac_idx(x2_mat, x1_mat)
+	fracs = []
+	for i in range(len(fracs1)):
+		fracs.append((fracs1[i]+fracs2[i])/2)  
+	return fracs
 
 def calc_sil(x1_mat,x2_mat,x1_lab,x2_lab):
 	"""
@@ -140,3 +130,17 @@ def calc_auc(x1_mat, x2_mat, x1_lab, x2_lab):
 	npc = sum(auc_npc)/len(auc_npc)
 	
 	return avg,d0,d3,d7,d11,npc
+
+def transfer_accuracy(domain1, domain2, type1, type2, n):
+	"""
+	Metric from UnionCom: "Label Transfer Accuracy"
+	"""
+	knn = KNeighborsClassifier(n_neighbors=n)
+	knn.fit(domain2, type2)
+	type1_predict = knn.predict(domain1)
+	np.savetxt("type1_predict.txt", type1_predict)
+	count = 0
+	for label1, label2 in zip(type1_predict, type1):
+		if label1 == label2:
+			count += 1
+	return count / len(type1)
