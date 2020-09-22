@@ -22,8 +22,8 @@ def scot(X, y, k, e, mode="distance", metric="minkowski", XontoY=True):
     # X=ut.zscore_standardize(np.asarray(X))
     # y=ut.zscore_standardize(np.asarray(y))
 
-    Cx=ut.get_graph_distance_matrix(X, k, mode="distance", metric="minkowski") 
-    Cy=ut.get_graph_distance_matrix(y, k, mode= "distance", metric="minkowski")
+    Cx=ut.get_graph_distance_matrix(X, k, mode=mode, metric=metric) 
+    Cy=ut.get_graph_distance_matrix(y, k, mode=mode, metric=metric)
     X_sampleNo= Cx.shape[0]
     y_sampleNo= Cy.shape[0]
     p=ot.unif(X_sampleNo)
