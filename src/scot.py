@@ -104,7 +104,7 @@ def search_scot(X,y, ks, es, plot_values = False):
     k_best = k_plot[gminI]
     print("Best result with GW distance is when e and k are:", e_best, k_best, " with lowest GW dist:", gmin)    
 
-    if plot:
+    if plot_values:
         return g_plot, k_plot, e_plot
     else:
         return k_best, e_best
