@@ -8,10 +8,10 @@ import ot
 from ot.utils import dist, UndefinedParameter
 from ot.optim import cg
 from ot.gromov import init_matrix, gwggrad, gwloss
-import src.utils as ut
+import utils as ut
 from ot.gpu import bregman
 
-def entropic_gromov_wasserstein(Cx, Cy, p, q, loss_fun, epsilon,  max_iter=1000, tol=1e-9, verbose=False, log=False):
+def entropic_gromov_wasserstein(C1, C2, p, q, loss_fun, epsilon,  max_iter=1000, tol=1e-9, verbose=False, log=False):
 	"""
 	Carries out Gromov-Wasserstein OT by running Sinkhorn-Knopp iterations on the GPU
 	"""
@@ -84,7 +84,7 @@ def scot(X, y, k, e, mode="distance", metric="minkowski", XontoY=True, returnCou
 	q=ot.unif(y_sampleNo)
 
 	# Perform optimization to get the coupling matrix between domains:
-	couplingM, log = ot.gromov.entropic_gromov_wasserstein(Cx, Cy, p, q, loss='square_loss', epsilon=e, log=True, verbose=True)
+	couplingM, log = entropic_gromov_wasserstein(Cx, Cy, p, q, loss_fun='square_loss', epsilon=e, log=True, verbose=True)
 
 	# check to make sure GW congerged, if not, warn the user with an error statement
 	converged=True #initialize the convergence flag
