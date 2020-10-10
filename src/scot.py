@@ -112,25 +112,32 @@ def search_scot(X,y, ks, es, plot_values = False):
 # find the best alignment by gromov-wasserstein distance
 def unsupervised_scot(X,y, XontoY=True):
     
-    # first fix k=50 and find the best epsilon (20 runs)
+    n = min(X.shape[0], y.shape[0])    
+
+    # use k = 20% of # sample or k = 50 if dataset is large 
+    k_start = min(n // 5, 50)
+
+    # first fix k and find the best epsilon (20 runs)
     es = np.logspace(-1, -4, 20)
-    k, eps = sweep_scot(X,y,[50], es)
+    k, eps = search_scot(X,y,[k_start], es)
 
     # now use that epsilon to find the best k (10 runs)
-    ks = [10,20,30,40,50,60,70,80,90,100]
-    k, eps = sweep_scot(X,y,ks, [eps])
+    if ( n > 250):
+        ks = np.linspace(10, 100, 10)
+    else:
+        ks = np.linspace(X.shape[0]//20, X.shape[0]//5, 10)
+    ks = ks.astype(int)
+    k, eps = search_scot(X,y,ks, [eps])
 
     # now use that k and epsilon to do a more refined grid search (30 runs)
     scale = np.log10(eps)
     eps_refined = np.logspace(scale + .25, scale - .25, 6)
-    if k > 10:
-        ks_refined = [k - 10, k - 5, k, k + 5, k + 10]
-    else:
-        ks_refined = [k - 5, k, k + 5, k + 10, k + 15]
+    ks_refined = np.linspace( max(5, k - 10), min(X.shape[0]//2, k + 10), 5)    
+    ks_refined = ks_refined.astype(int)
     k_best, e_best = search_scot(X, y, ks_refined, eps_refined)
 
     # run soct with these parameters
-    X_t, y_t = scot(X, y, k_best, e_best, XontoY)
+    X_t, y_t = scot(X, y, k_best, e_best, XontoY = XontoY)
     
     return X_t, y_t, k_best, e_best
 
