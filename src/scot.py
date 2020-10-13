@@ -111,34 +111,52 @@ def search_scot(X,y, ks, es, plot_values = False):
 
 # find the best alignment by gromov-wasserstein distance
 def unsupervised_scot(X,y, XontoY=True):
-    
-    n = min(X.shape[0], y.shape[0])    
 
     # use k = 20% of # sample or k = 50 if dataset is large 
-    k_start = min(n // 5, 50)
+    n = min(X.shape[0], y.shape[0]) 
+    k_best = min(n // 5, 50)
 
-    # first fix k and find the best epsilon (20 runs)
-    es = np.logspace(-1, -4, 20)
-    k, eps = search_scot(X,y,[k_start], es)
+    # first fix k and find the best epsilon (6 runs)
+    es = np.logspace(-2, -3, 6)
+    g1, k1, e1 = search_scot(X,y,[k_best], es, plot_values = True)
 
-    # now use that epsilon to find the best k (10 runs)
+    # save the best epsilon from that search
+    gmin = np.min(g1)
+    gminI=np.argmin(g1)
+    e_best = e1[gminI]
+
+    # fix that epsilon and vary k (4 runs)
     if ( n > 250):
-        ks = np.linspace(10, 100, 10)
+        ks = np.linspace(20, 100, 4)
     else:
-        ks = np.linspace(X.shape[0]//20, X.shape[0]//5, 10)
+        ks = np.linspace(X.shape[0]//20, X.shape[0]//6, 4)
     ks = ks.astype(int)
-    k, eps = search_scot(X,y,ks, [eps])
+    g2, k2, e2 = search_scot(X,y,ks, [e_best], plot_values = True)
 
-    # now use that k and epsilon to do a more refined grid search (30 runs)
-    scale = np.log10(eps)
-    eps_refined = np.logspace(scale + .25, scale - .25, 6)
-    ks_refined = np.linspace( max(5, k - 10), min(X.shape[0]//2, k + 10), 5)    
+    # save the best k from that search 
+    gminI=np.argmin(g2)
+    if (g2[gminI] < gmin):
+        gmin = g2[gminI]
+        k_best = k2[gminI]
+
+    # now use that k and epsilon to do a more refined grid search (10 runs)
+    scale = np.log10(e_best)
+    eps_refined = np.logspace(scale + .25, scale - .25, 5)
+
+    ks_refined = np.linspace( max(5, k_best - 5), min(X.shape[0]//2, k_best + 5), 2)    
     ks_refined = ks_refined.astype(int)
-    k_best, e_best = search_scot(X, y, ks_refined, eps_refined)
+    g3, k3, e3 = search_scot(X, y, ks_refined, eps_refined, plot_values = True)
+
+    # find the best parameter set from all runs
+    gminI=np.argmin(g3)
+    if (g3[gminI] < gmin):
+        gmin = g3[gminI]
+        k_best = k3[gminI]
+        e_best = e3[gminI]
+
+    print("Lowest GW distance is ", gmin, " for epsilon = ", e_best, " and k = ", k_best)
 
     # run soct with these parameters
     X_t, y_t = scot(X, y, k_best, e_best, XontoY = XontoY)
     
     return X_t, y_t, k_best, e_best
-
-
