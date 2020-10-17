@@ -12,7 +12,7 @@ from ot.gromov import init_matrix, gwggrad, gwloss
 import src.utils as ut
 
 
-def scot(X, y, k, e, mode="distance", metric="minkowski", XontoY=True, returnCoupling=False):
+def scot(X, y, k, e, mode="connectivity", metric="correlation", XontoY=True, returnCoupling=False):
 	"""
 	Given two datasets (X and y) and 
 	the hyperparameters (k: number of neighbors to be used in kNN graph construction; and e: eplison value in entropic regularization),
