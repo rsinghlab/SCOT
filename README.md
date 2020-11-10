@@ -1,8 +1,7 @@
+# Information about this fork
+This fork extends SCOT by allowing for unbalanced Gromov-Wasserstein optimal transport using the implementation by Thibault Sejourne [here](https://github.com/thibsej/unbalanced_gromov_wasserstein). I have included an example of why unbalanced GW is useful in this general context in `unbalanced_GW.ipynb`.
+
 # SCOT
-
-This fork extends SCOT by allowing for unbalanced Gromov-Wasserstein optimal transport using the implementation by Thibault Sejourne [here](https://github.com/thibsej/unbalanced_gromov_wasserstein). 
-
-I have included an example of why unbalanced GW is useful in this general context in `unbalanced_GW.ipynb`.
 
 Repository for "Gromov-Wasserstein based optimal transport for aligning single-cell multi-omics data" manuscript:
 https://www.biorxiv.org/content/10.1101/2020.04.28.066787v1  
