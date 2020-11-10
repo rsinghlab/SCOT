@@ -62,10 +62,10 @@ def transport_data(source, target, couplingMatrix, transposeCoupling=False):
 	transposeCoupling would need to be True only when the coupling matrix is of the form 
 	"""
 	if transposeCoupling == False:
-		transported_data= np.matmul(couplingMatrix, target)*source.shape[0]
+		P = (couplingMatrix.T/couplingMatrix.sum(1)).T
+		transported_data= np.matmul(P, target)
 	else:
-		couplingMatrix=np.transpose(couplingMatrix)
-		transported_data=np.matmul(couplingMatrix, source)*target.shape[0]
-		
+		P = (couplingMatrix/couplingMatrix.sum(0)).T
+		transported_data=np.matmul(P, source)
 	return transported_data
 

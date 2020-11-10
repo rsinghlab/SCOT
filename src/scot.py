@@ -10,9 +10,16 @@ from ot.utils import dist, UndefinedParameter
 from ot.optim import cg
 from ot.gromov import init_matrix, gwggrad, gwloss
 import src.utils as ut
+import sys
 
+# We use the unbalanced Gromov-Wasserstein solver (utilising PyTorch) written by Thibault Sejourne 
+# https://github.com/thibsej/unbalanced_gromov_wasserstein
+# Clone the above repo and update below to the corresponding path
+sys.path.insert(0, "/home/zsteve/analysis/unbalanced_gromov_wasserstein/solver")
+from tlb_kl_sinkhorn_solver import TLBSinkhornSolver
+import torch
 
-def scot(X, y, k, e, mode="connectivity", metric="correlation", XontoY=True, returnCoupling=False):
+def scot(X, y, k, e, rho = 1, mode="connectivity", metric="correlation", XontoY=True, returnCoupling=False, balanced = True):
 	"""
 	Given two datasets (X and y) and 
 	the hyperparameters (k: number of neighbors to be used in kNN graph construction; and e: eplison value in entropic regularization),
@@ -26,7 +33,7 @@ def scot(X, y, k, e, mode="connectivity", metric="correlation", XontoY=True, ret
 
 	# Construct the kNN graphs
 	Cx=ut.get_graph_distance_matrix(X, k, mode=mode, metric=metric) 
-	Cy=ut.get_graph_distance_matrix(y, k, mode=mode, metric=metric)
+	Cy=ut.get_graph_distance_matrix(y, k, mode=mode, metric=metric);
 
 	# Initialize marginal distributions over data:
 	X_sampleNo= Cx.shape[0]
@@ -35,11 +42,17 @@ def scot(X, y, k, e, mode="connectivity", metric="correlation", XontoY=True, ret
 	q=ot.unif(y_sampleNo)
 
 	# Perform optimization to get the coupling matrix between domains:
-	couplingM, log = ot.gromov.entropic_gromov_wasserstein(Cx, Cy, p, q, 'square_loss', epsilon=e, log=True, verbose=True)
+	if balanced:
+		couplingM, log = ot.gromov.entropic_gromov_wasserstein(Cx, Cy, p, q, 'square_loss', epsilon=e, log=True, verbose=True)
+	else:
+		solver = TLBSinkhornSolver(nits=1000, nits_sinkhorn=2500, gradient=False, tol=1e-3, tol_sinkhorn=1e-3)
+		couplingM, _ = solver.tlb_sinkhorn(torch.Tensor(p).cuda(), torch.Tensor(Cx).cuda(), torch.Tensor(q).cuda(), torch.Tensor(Cy).cuda(), rho=rho*0.5*(Cx.mean() + Cy.mean()), eps=e, init=None)
+		couplingM = couplingM.cpu().numpy()
+		log = None
 
 	# check to make sure GW congerged, if not, warn the user with an error statement
 	converged=True #initialize the convergence flag
-	if (np.isnan(couplingM).any() or np.any(~couplingM.any(axis=1)) or np.any(~couplingM.any(axis=0)) or sum(sum(couplingM)) < .95):
+	if (np.isnan(couplingM).any() or np.any(~couplingM.any(axis=1)) or np.any(~couplingM.any(axis=0))): # or sum(sum(couplingM)) < .95):
 		print("Did not converge. Try increasing the epsilon value. ")
 		converged=False
 
