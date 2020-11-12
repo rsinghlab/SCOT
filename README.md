@@ -2,7 +2,7 @@
 
 This is the repository for "Gromov-Wasserstein based optimal transport for aligning single-cell multi-omics data" manuscript:
 https://www.biorxiv.org/content/10.1101/2020.04.28.066787v2.  
-**Note:** We are currently in the process of updating our repository for better documentation and complete set of experiments. 
+**Note:** We are currently in the process of updating our repository for better documentation and complete set of experiments. You will be able to check out the demonstrations and documentations here: https://rsinghlab.github.io/SCOT/, as well as on our Jupyter Notebooks in the repository.  
 
 ### SCOT v.0.2.0  
 Changes from the previous version:  
