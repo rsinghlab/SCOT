@@ -1,4 +1,6 @@
-## Welcome to GitHub Pages
+## Single-Cell alignment using Optimal Transport (SCOT)
+
+**Note:** This GitHub page is a work in progress. It will contain information on the SCOT methodology, as well as demonstrated examples in various application cases. 
 
 You can use the [editor on GitHub](https://github.com/rsinghlab/SCOT/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
 
