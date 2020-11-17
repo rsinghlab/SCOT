@@ -1,7 +1,6 @@
 
 ![](assets/SCOT_logo.png)
 
-![](assets/SCOT_logo.png)
 
 **Note:** This GitHub page is a work in progress. It will contain information on the SCOT methodology, as well as demonstrated examples in various application cases. 
 
