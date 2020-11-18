@@ -21,7 +21,7 @@ numpy, sklearn, matplotlib, scipy, cython, POT (note that numpy and cython must 
 **Note:** We are happy to see any work built using or on top of SCOT. However, we ask that you please make sure to give credit in your code if you are using code from this repository.  
 Demetci, P. Santorella, R. Sandstede, B., Noble, W. S., Singh, R. 2020. Gromov-Wasserstein based optimal transport for aligning single-cell multi-omics data. bioRxiv.  
 **BibTex Citation:**  
-`@article {SCOT2020,  
+```@article {SCOT2020,  
 	author = {Demetci, Pinar and Santorella, Rebecca and Sandstede, Bj{\"o}rn and Noble, William Stafford and Singh, Ritambhara},  
 	title = {Gromov-Wasserstein optimal transport to align single-cell multi-omics data},  
 	elocation-id = {2020.04.28.066787},  
@@ -31,5 +31,5 @@ Demetci, P. Santorella, R. Sandstede, B., Noble, W. S., Singh, R. 2020. Gromov-W
 	URL = {https://www.biorxiv.org/content/early/2020/11/11/2020.04.28.066787},  
 	eprint = {https://www.biorxiv.org/content/early/2020/11/11/2020.04.28.066787.full.pdf},  
 	journal = {bioRxiv}. 
-}`   
+}```
 
