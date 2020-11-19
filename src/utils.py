@@ -34,11 +34,9 @@ def get_spatial_distance_matrix(data, metric="eucledian"):
 	Cdata= sp.spatial.distance.cdist(data,data,metric=metric)
 	return Cdata/Cdata.max()
 
-def get_graph_distance_matrix(data, num_neighbors, mode="distance", metric="minkowski"):
+def get_graph_distance_matrix(data, num_neighbors, mode="connectivity", metric="correlation"):
 	"""
-	The default distance metric used with sklearn kneighbors_graph is ‘euclidean’ (‘minkowski’ metric with the p param equal to 2.). 
-	That's why metric is set to "minkowski". If set to something else, it's possible we might need to input other params.
-	I have not played with it to see if it makes any difference or if another metric makes more sense. 
+	Compute graph distance matrices on data 
 	"""
 	assert (mode in ["connectivity", "distance"]), "Norm argument has to be either one of 'connectivity', or 'distance'. "
 	if mode=="connectivity":
@@ -57,9 +55,7 @@ def get_graph_distance_matrix(data, num_neighbors, mode="distance", metric="mink
 def transport_data(source, target, couplingMatrix, transposeCoupling=False):
 	"""
 	Given: data in the target space, data in the source space, a coupling matrix learned via Gromow-Wasserstein OT
-	Returns: 
-
-	transposeCoupling would need to be True only when the coupling matrix is of the form 
+	Returns: source (target) matrix transported onto the target (source)
 	"""
 	if transposeCoupling == False:
 		P = (couplingMatrix.T/couplingMatrix.sum(1)).T
