@@ -26,16 +26,12 @@ def scot(X, y, k, e, rho = 1, mode="connectivity", metric="correlation", XontoY=
 	returns the resulting datasets after transport
 	For transport in the opposite direction, set XontoY to False
 	"""
-	## I think we should let users choose what type of normalization they want to use since that might matter in comparisons to other methods
-	## e.g. MMD-MA uses l-2 norm sometimes and they might want to use that for fair comparison. So commented out the part below -Pinar
-	# X=ut.zscore_standardize(np.asarray(X))
-	# y=ut.zscore_standardize(np.asarray(y))
-
+	
 	# Construct the kNN graphs
 	Cx=ut.get_graph_distance_matrix(X, k, mode=mode, metric=metric) 
 	Cy=ut.get_graph_distance_matrix(y, k, mode=mode, metric=metric);
 
-	# Initialize marginal distributions over data:
+	# Initialize uniform marginal distributions over data:
 	X_sampleNo= Cx.shape[0]
 	y_sampleNo= Cy.shape[0]
 	p=ot.unif(X_sampleNo)
@@ -52,12 +48,11 @@ def scot(X, y, k, e, rho = 1, mode="connectivity", metric="correlation", XontoY=
 
 	# check to make sure GW congerged, if not, warn the user with an error statement
 	converged=True #initialize the convergence flag
-	if (np.isnan(couplingM).any() or np.any(~couplingM.any(axis=1)) or np.any(~couplingM.any(axis=0))): # or sum(sum(couplingM)) < .95):
+	if (np.isnan(couplingM).any() or np.any(~couplingM.any(axis=1)) or np.any(~couplingM.any(axis=0))):
 		print("Did not converge. Try increasing the epsilon value. ")
 		converged=False
 
-	# If the user wants to get the coupling matrix and the optimization log at the end of this and investigate it or perform some projection themselves,
-	# allow them (useful for hyperparameter tuning with projections in both directions) :
+	# Allow the user to return the coupling if desired
 	if returnCoupling==True:
 		return couplingM, log
 
@@ -71,11 +66,13 @@ def scot(X, y, k, e, rho = 1, mode="connectivity", metric="correlation", XontoY=
 		else:
 			y_transported = ut.transport_data(X,y,couplingM,transposeCoupling=True)
 			return X, y_transported
-# runs scot for given values of k and epsilon
-# by default returns the parameters corresponding to the lowest gromov-wasserstein distance
-# (optional) returns all data points for plotting
+		
 def search_scot(X,y, ks, es, plot_values = False): 
-
+    '''
+    Performs a hyperparameter sweep for given values of k and epsilon
+    Default: return the parameters corresponding to the lowest GW distance
+    (Optional): return all k, epsilon, and GW values
+    ''''	
     X_sampleNo= X.shape[0]
     y_sampleNo= y.shape[0]
     p=ot.unif(X_sampleNo)
@@ -101,30 +98,31 @@ def search_scot(X,y, ks, es, plot_values = False):
                 print(str(counter)+"/"+str(total))
 
             # run scot
-            gw, log = ot.gromov.entropic_gromov_wasserstein(Cx, Cy, p, q, 'square_loss', epsilon = e, log=True, verbose=False, max_iter = 200)
+            gw, log = ot.gromov.entropic_gromov_wasserstein(Cx, Cy, p, q, 'square_loss', epsilon = e, log=True, verbose=False)
 
-            if (np.isnan(gw).any() or np.any(~gw.any(axis=1)) or np.any(~gw.any(axis=0)) or sum(sum(gw)) < .95):
+            if (np.isnan(gw).any() or np.any(~gw.any(axis=1)) or np.any(~gw.any(axis=0))):
                 print("Did not converge")
             else:   
                 g_plot.append(log["gw_dist"])
                 k_plot.append(k)
                 e_plot.append(e)          
-
-    # find the parameters corresponding to the lowest gromov-wasserstein distance
-    gmin=np.amin(g_plot)
-    gminI=np.argmin(g_plot)
-    e_best = e_plot[gminI]
-    k_best = k_plot[gminI]
-    print("Best result with GW distance is when e and k are:", e_best, k_best, " with lowest GW dist:", gmin)    
-
+   
     if plot_values:
+	# return all values	
         return g_plot, k_plot, e_plot
     else:
+        # return the parameters corresponding to the lowest gromov-wasserstein distance
+        gmin=np.amin(g_plot)
+        gminI=np.argmin(g_plot)
+        e_best = e_plot[gminI]
+        k_best = k_plot[gminI]
         return k_best, e_best
 
-# find the best alignment by gromov-wasserstein distance
 def unsupervised_scot(X,y, XontoY=True):
-
+    '''
+    Unsupervised hyperparameter tuning algorithm to find an alignment 
+    by using the GW distance as a measure of alignment
+    '''
     # use k = 20% of # sample or k = 50 if dataset is large 
     n = min(X.shape[0], y.shape[0]) 
     k_best = min(n // 5, 50)
@@ -166,8 +164,6 @@ def unsupervised_scot(X,y, XontoY=True):
         gmin = g3[gminI]
         k_best = k3[gminI]
         e_best = e3[gminI]
-
-    print("Lowest GW distance is ", gmin, " for epsilon = ", e_best, " and k = ", k_best)
 
     # run soct with these parameters
     X_t, y_t = scot(X, y, k_best, e_best, XontoY = XontoY)
