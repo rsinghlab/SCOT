@@ -72,7 +72,7 @@ def search_scot(X,y, ks, es, plot_values = False):
     Performs a hyperparameter sweep for given values of k and epsilon
     Default: return the parameters corresponding to the lowest GW distance
     (Optional): return all k, epsilon, and GW values
-    ''''	
+    '''
     X_sampleNo= X.shape[0]
     y_sampleNo= y.shape[0]
     p=ot.unif(X_sampleNo)
