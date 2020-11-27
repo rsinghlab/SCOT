@@ -1,7 +1,8 @@
 """
 Author: Pinar Demetci, Rebecca Santorella
 12 February 2020
-Utils for SCOT
+Updated: 27 November 2020
+SCOT algorithm: Single Cell alignment using Optimal Transport
 """
 import numpy as np
 import ot
@@ -29,7 +30,7 @@ def scot(X, y, k, e, rho = 1, mode="connectivity", metric="correlation", XontoY=
 	
 	# Construct the kNN graphs
 	Cx=ut.get_graph_distance_matrix(X, k, mode=mode, metric=metric) 
-	Cy=ut.get_graph_distance_matrix(y, k, mode=mode, metric=metric);
+	Cy=ut.get_graph_distance_matrix(y, k, mode=mode, metric=metric)
 
 	# Initialize uniform marginal distributions over data:
 	X_sampleNo= Cx.shape[0]
