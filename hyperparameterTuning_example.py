@@ -1,13 +1,13 @@
 """
-@Author: Pinar Demetci, 2020
-SCOT hyperparameter tuning script
+@Author: Pinar Demetci, Rebecca Santorella 2020
+SCOT hyperparameter tuning example script
 """
 
 import os
 import numpy as np
 import src.utils as ut
 import src.evals as evals
-from src.scot import *
+import src.scot2 as sc
 
 ### Change working directory to /data in order to import the data
 os.chdir("data/")
@@ -30,44 +30,36 @@ all_FOSCTTM_X=[]
 all_FOSCTTM_y=[]
 all_GWdist=[]
 
-
+# initialize SCOT object
+scot=sc.SCOT(X, y)
 
 counter=1
 for e in es:
-	for k in ks:
-		print(counter," of ", total)
-		couplingM, log=scot(X, y, k, e, mode="connectivity", metric="correlation", returnCoupling=True)	
+    for k in ks:
+        print(counter," of ", total)
+        X_aligned, y_aligned, gwDist, converged =scot.align(k, e, normalize = False, XontoY=True)    
 
-		# Check convergence: 
-		converged=True
-		if (np.isnan(couplingM).any() or np.any(~couplingM.any(axis=1)) or np.any(~couplingM.any(axis=0)) or sum(sum(couplingM)) < .95):
-			converged=False
+        # Record parameters and metrics:
+        all_ks.append(k)
+        all_es.append(e)
+        if converged:
+            # Use X onto Y projection to calculate mean FOSCTTM:
+            FOSCTTM_X=np.mean(evals.calc_domainAveraged_FOSCTTM(X_aligned, y_aligned))
 
-		# Get metrics:
-		gwDist=log['gw_dist']
+            # Use Y onto Y projection to calculate mean FOSCTTM:
+            X_aligned2, y_aligned2 = scot.barycentric_projection(XontoY=False)
+            FOSCTTM_y=np.mean(evals.calc_domainAveraged_FOSCTTM(X_aligned2, y_aligned2))
 
-		# Project X onto Y and calculate mean FOSCTTM:
-		X_transported = ut.transport_data(X,y,couplingM,transposeCoupling=False)
-		FOSCTTM_X=np.mean(evals.calc_domainAveraged_FOSCTTM(X_transported,y))
+            all_FOSCTTM_X.append(FOSCTTM_X)
+            all_FOSCTTM_y.append(FOSCTTM_y)
+            all_GWdist.append(gwDist)
 
-		# Project X onto Y and calculate mean FOSCTTM:
-		y_transported = ut.transport_data(X,y,couplingM,transposeCoupling=True)
-		FOSCTTM_y=np.mean(evals.calc_domainAveraged_FOSCTTM(X,y_transported))
-
-		# Record parameters and metrics:
-		all_ks.append(k)
-		all_es.append(e)
-		if converged==True:
-			all_FOSCTTM_X.append(FOSCTTM_X)
-			all_FOSCTTM_y.append(FOSCTTM_y)
-			all_GWdist.append(gwDist)
-
-		else: # So that convergence issues don't mislead us to a numerically unstable hyperparameter combination:
-			all_FOSCTTM_X.append(1)
-			all_FOSCTTM_y.append(1)
-			all_GWdist.append(10)
-			
-		counter+=1
+        else: # So that convergence issues don't mislead us to a numerically unstable hyperparameter combination:
+            all_FOSCTTM_X.append(1)
+            all_FOSCTTM_y.append(1)
+            all_GWdist.append(10)
+            
+        counter+=1
 
 # Choose the best performing hyperparameter setting in both directions:
 index_X = np.where(all_FOSCTTM_X==np.amin(all_FOSCTTM_X))[0][0]
