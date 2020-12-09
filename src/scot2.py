@@ -205,6 +205,109 @@ class SCOT(object):
             else:
                 return self.X, self.y, self.gwdist, self.flag
 
-    def unsupervised_scot(self):
-        pass
+    def search_scot(self, ks, es, plot_values = False): 
+        '''
+        Performs a hyperparameter sweep for given values of k and epsilon
+        Default: return the parameters corresponding to the lowest GW distance
+        (Optional): return all k, epsilon, and GW values
+        '''
+
+        self.init_marginals()
+
+        # store values of k, epsilon, and gw distance 
+        k_plot=[]
+        e_plot=[]
+        g_plot=[]
+
+        total=len(es)*len(ks)
+        counter=0
+        
+        # search in k first to reduce graph computation
+        for k in ks:
+            self.build_kNN(k)
+            self.compute_graphDistances()
+
+            for e in es:
+
+                counter+=1
+                if (counter % 10 == 0):
+                    print(str(counter)+"/"+str(total))
+
+                # run scot
+                self.find_correspondences(e=e, balanced=True)
+
+                if self.flag:   
+                    g_plot.append(self.gwdist)
+                    k_plot.append(k)
+                    e_plot.append(e)          
+       
+        if plot_values:
+	        # return all values	
+            return g_plot, k_plot, e_plot
+        else:
+            # return the parameters corresponding to the lowest gromov-wasserstein distance
+            gmin=np.amin(g_plot)
+            gminI=np.argmin(g_plot)
+            e_best = e_plot[gminI]
+            k_best = k_plot[gminI]
+            return k_best, e_best
+
+    def unsupervised_scot(self, normalize=True, norm='l2', XontoY=True):
+        '''
+        Unsupervised hyperparameter tuning algorithm to find an alignment 
+        by using the GW distance as a measure of alignment
+        '''
+
+        if normalize:
+            self.normalize(norm=norm)
+
+        # use k = 20% of # sample or k = 50 if dataset is large 
+        n = min(self.X.shape[0], self.y.shape[0]) 
+        k_best = min(n // 5, 50)
+
+        # first fix k and find the best epsilon (6 runs)
+        es = np.logspace(-2, -3, 6)
+        g1, k1, e1 = self.search_scot([k_best], es, plot_values = True)
+
+        # save the best epsilon from that search
+        gmin = np.min(g1)
+        gminI=np.argmin(g1)
+        e_best = e1[gminI]
+
+        # fix that epsilon and vary k (4 runs)
+        if ( n > 250):
+            ks = np.linspace(20, 100, 4)
+        else:
+            ks = np.linspace(n//20, n//6, 4)
+        ks = ks.astype(int)
+        g2, k2, e2 = self.search_scot(ks, [e_best], plot_values = True)
+
+        # save the best k from that search 
+        gminI=np.argmin(g2)
+        if (g2[gminI] < gmin):
+            gmin = g2[gminI]
+            k_best = k2[gminI]
+
+        # now use that k and epsilon to do a more refined grid search (10 runs)
+        scale = np.log10(e_best)
+        eps_refined = np.logspace(scale + .25, scale - .25, 5)
+
+        ks_refined = np.linspace( max(5, k_best - 5), min(n//2, k_best + 5), 2)    
+        ks_refined = ks_refined.astype(int)
+        g3, k3, e3 = self.search_scot(ks_refined, eps_refined, plot_values = True)
+
+        # find the best parameter set from all runs
+        gminI=np.argmin(g3)
+        if (g3[gminI] < gmin):
+            gmin = g3[gminI]
+            k_best = k3[gminI]
+            e_best = e3[gminI]
+
+        # get alignment with these parameters
+        self.build_kNN(k_best)
+        self.compute_graphDistances()
+        self.find_correspondences(e=e_best, balanced=True)
+        X_aligned, y_aligned = self.barycentric_projection(XontoY)
+        
+        return X_aligned, y_aligned, k_best, e_best
 
