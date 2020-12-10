@@ -19,9 +19,13 @@ When missing correspondence information for performing hyperparameter selection,
 numpy, sklearn, matplotlib, scipy, cython, POT (note that numpy and cython must be installed prior to POT), torch  
 
 **Folder navivgation:**
+
 -src contains the sourcecode for SCOT
+
 -data contains raw data files
+
 -replication contains jupyter notebooks to replicate results from our paper
+
 -examples contains short scripts to show how to apply SCOT in different scenarios
 
 
