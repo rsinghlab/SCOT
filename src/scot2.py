@@ -60,7 +60,7 @@ class SCOT(object):
 
         self.coupling=None # Coupling matrix that relates domain 1 and domain 2. Entries describes the probability of correspondence between the samples in domain 1 (rows) and domain 2 (columns)
         self.gwdist=None # Gromov-Wasserstein distance between domains after alignment. Can be used as a proxy for alignment quality
-        self.flag = True # convergence flag
+        self.flag = None # convergence flag
 
     def init_marginals(self):
         self.p= ot.unif(self.X.shape[0]) # Without any prior information, we set the probabilities to what we observe empirically: uniform over all observed samples
@@ -189,23 +189,17 @@ class SCOT(object):
             y_aligned=np.matmul(np.transpose(self.coupling), self.X)*self.y.shape[0]
         return X_aligned, y_aligned
 
-    def align(self, k, e, balanced=True, rho=1e-3, verbose=True, normalize=True, norm="l2", XontoY=True, returnCoupling = False):
+    def align(self, k, e, balanced=True, rho=1e-3, verbose=True, normalize=True, norm="l2", XontoY=True):
         if normalize:
             self.normalize(norm=norm)
         self.init_marginals()
         self.build_kNN(k)
         self.compute_graphDistances()
         self.find_correspondences(e=e, balanced=balanced,  rho=rho, verbose=verbose)
-        if returnCoupling:
-            return self.coupling, self.gwdist, self.flag
-        else:
-            if self.flag:
-                X_aligned, y_aligned = self.barycentric_projection(XontoY)
-                return X_aligned, y_aligned, self.gwdist, self.flag
-            else:
-                return self.X, self.y, self.gwdist, self.flag
+        X_aligned, y_aligned = self.barycentric_projection(XontoY)
+        return X_aligned, y_aligned
 
-    def search_scot(self, ks, es, plot_values = False): 
+    def search_scot(self, ks, es, all_values = False): 
         '''
         Performs a hyperparameter sweep for given values of k and epsilon
         Default: return the parameters corresponding to the lowest GW distance
@@ -241,7 +235,7 @@ class SCOT(object):
                     k_plot.append(k)
                     e_plot.append(e)          
        
-        if plot_values:
+        if all_values:
 	        # return all values	
             return g_plot, k_plot, e_plot
         else:
@@ -267,7 +261,7 @@ class SCOT(object):
 
         # first fix k and find the best epsilon (6 runs)
         es = np.logspace(-2, -3, 6)
-        g1, k1, e1 = self.search_scot([k_best], es, plot_values = True)
+        g1, k1, e1 = self.search_scot([k_best], es, all_values = True)
 
         # save the best epsilon from that search
         gmin = np.min(g1)
@@ -280,7 +274,7 @@ class SCOT(object):
         else:
             ks = np.linspace(n//20, n//6, 4)
         ks = ks.astype(int)
-        g2, k2, e2 = self.search_scot(ks, [e_best], plot_values = True)
+        g2, k2, e2 = self.search_scot(ks, [e_best], all_values = True)
 
         # save the best k from that search 
         gminI=np.argmin(g2)
@@ -294,7 +288,7 @@ class SCOT(object):
 
         ks_refined = np.linspace( max(5, k_best - 5), min(n//2, k_best + 5), 2)    
         ks_refined = ks_refined.astype(int)
-        g3, k3, e3 = self.search_scot(ks_refined, eps_refined, plot_values = True)
+        g3, k3, e3 = self.search_scot(ks_refined, eps_refined, all_values = True)
 
         # find the best parameter set from all runs
         gminI=np.argmin(g3)
