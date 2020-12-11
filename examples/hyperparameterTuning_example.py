@@ -2,15 +2,16 @@
 @Author: Pinar Demetci, Rebecca Santorella 2020
 SCOT hyperparameter tuning example script
 """
-
 import os
+import sys
+sys.path.insert(1, '../src/')
+import utils as ut
+import evals as evals
+import scot2 as sc
 import numpy as np
-import src.utils as ut
-import src.evals as evals
-import src.scot2 as sc
 
 ### Change working directory to /data in order to import the data
-os.chdir("data/")
+os.chdir("../data/")
 
 ### Read and normalize the data:
 X=np.load("scatac_feat.npy")
@@ -37,12 +38,14 @@ counter=1
 for e in es:
     for k in ks:
         print(counter," of ", total)
-        X_aligned, y_aligned, gwDist, converged =scot.align(k, e, normalize = False, XontoY=True)    
+        X_aligned, y_aligned = scot.align(k, e, normalize = False, XontoY=True)    
 
         # Record parameters and metrics:
         all_ks.append(k)
         all_es.append(e)
-        if converged:
+        
+        # check convergence
+        if scot.flag:
             # Use X onto Y projection to calculate mean FOSCTTM:
             FOSCTTM_X=np.mean(evals.calc_domainAveraged_FOSCTTM(X_aligned, y_aligned))
 
@@ -52,7 +55,7 @@ for e in es:
 
             all_FOSCTTM_X.append(FOSCTTM_X)
             all_FOSCTTM_y.append(FOSCTTM_y)
-            all_GWdist.append(gwDist)
+            all_GWdist.append(scot.gwdist)
 
         else: # So that convergence issues don't mislead us to a numerically unstable hyperparameter combination:
             all_FOSCTTM_X.append(1)

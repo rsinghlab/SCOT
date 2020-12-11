@@ -4,13 +4,15 @@ SCOT hyperparameter tuning example script
 """
 
 import os
+import sys
+sys.path.insert(1, '../src/')
+import utils as ut
+import evals as evals
+import scot2 as sc
 import numpy as np
-import src.utils as ut
-import src.evals as evals
-import src.scot2 as sc
 
 ### Change working directory to /data in order to import the data
-os.chdir("data/")
+os.chdir("../data/")
 
 ### Read and normalize the data:
 X=np.load("scatac_feat.npy")
