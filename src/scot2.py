@@ -169,7 +169,7 @@ class SCOT(object):
                 self.flag = False
 
         else:
-            self.coupling, log= self.unbalanced_entropic_gromov_wasserstein(e=e, rho= rho, loss_fun="square_loss", max_iter=1000, tol=1e-6, verbose=True, log=True)
+            self.coupling, log = self.unbalanced_entropic_gromov_wasserstein(e=e, rho= rho, loss_fun="square_loss", max_iter=1000, tol=1e-6, verbose=True)
             self.gwdist= log['gw_dist']
 
             if (np.isnan(self.coupling).any() or np.isinf(self.coupling).any()): # Note: It's possible for unbalanced OT to converge and return a coupling matrix where sum does not add up to one. So we cannot check for sum of coupling elements for coupling in this case. 
@@ -179,7 +179,7 @@ class SCOT(object):
     
     def barycentric_projection(self, XontoY=True):
 
-        #Normalizing the coupling matrix so all elements add up to 1. Needed for the unbalanced OT? We check this for 
+        #Normalizing the coupling matrix so all elements add up to 1 
         self.coupling=self.coupling / np.sum(self.coupling) 
         if XontoY:
             y_aligned=self.y
