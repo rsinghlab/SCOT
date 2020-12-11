@@ -22,7 +22,7 @@ numpy, sklearn, matplotlib, scipy, cython, POT (note that numpy and cython must 
 **1) src** contains the sourcecode for SCOT
 **2) data** contains raw data files
 **3) replication** contains jupyter notebooks to replicate results from our paper
-**4) examples ** contains short scripts and notebooks to show how to apply SCOT in different scenarios
+**4) examples** contains short scripts and notebooks to show how to apply SCOT in different scenarios
 
 
 **Note:** We are happy to see any work built using or on top of SCOT. However, we ask that you please make sure to give credit in your code if you are using code from this repository.  
