@@ -24,6 +24,7 @@ numpy, sklearn, matplotlib, scipy, cython, POT (note that numpy and cython must 
 **3) replication** contains jupyter notebooks to replicate results from our paper  
 **4) examples** contains short scripts and notebooks to show how to apply SCOT in different scenarios  
 
+**Documentation (work in progress):** [http://rsinghlab.github.io/SCOT](http://rsinghlab.github.io/SCOT)    
 
 **Note:** We are happy to see any work built using or on top of SCOT. However, we ask that you please make sure to give credit in your code if you are using code from this repository.  
 Demetci, P. Santorella, R. Sandstede, B., Noble, W. S., Singh, R. 2020. Gromov-Wasserstein based optimal transport for aligning single-cell multi-omics data. bioRxiv.  
