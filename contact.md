@@ -1,5 +1,6 @@
 ---
 layout: template
+permalink: /contact/
 ---
 
 ## Contact

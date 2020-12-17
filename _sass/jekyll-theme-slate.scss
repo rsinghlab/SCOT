@@ -261,8 +261,8 @@ Full-Width Styles
 
 .inner {
   position: relative;
-  max-width: 640px;
-  padding: 20px 10px;
+  max-width: 720px;
+  padding: 15px 10px;
   margin: 0 auto;
 }
 
@@ -347,6 +347,10 @@ Full-Width Styles
 
 .tar_download_link:hover {
   background: url(../images/sprite_download.png) no-repeat top right;
+}
+
+.nav-bar a{
+  color: #f2f2f2 !important;
 }
 
 #main_content_wrap {
