@@ -2,13 +2,7 @@
 layout: template
 ---
 
-![](assets/SCOT_logo.png)
-
-Welcome to the documentation page for SCOT! <br>
-SCOT is an unsupervised algorithm for cell-to-cell alignment of single-cell multi-omic data. <br>
-We provide tutorials and examples on this website. For details on methodology and experimental results, please check out [our pre-print on bioRxiv](https://www.biorxiv.org/content/10.1101/2020.04.28.066787v2.full)
-
-### Overview
+## Tutorial
 For many single-cell technologies, it is difficult to apply them simultaneously on the same single-cell. As a result, to get multiple views of a genome at the single-cell resolution, we need to integrate data from different -omic sequencing datasets. When these single-cell sequencing methods are applied to the same cell population or different populations that are expected to share some underlying biological manifold (e.g. common cell types), we expect there to be some cell-to-cell alignment to recover. SCOT performs alignment by using Gromov-Wasserstein optimal transport.  
 
 <br> 
