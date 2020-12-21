@@ -11,6 +11,6 @@ permalink: /contact/
 
 If you run into an issue with the source code, you can also [create an issue on our GitHub page](https://github.com/rsinghlab/SCOT/issues) and we will look into it as soon as possible. 
 
-#### We would also like to acknowledge our collaborators and co-authors:
+##### We would also like to acknowledge our collaborators and co-authors:
 [Björn Sandstede, Ph.D.](http://bjornsandstede.com/) (Brown University) <br>
 [William Stafford Noble, Ph.D.](https://noble.gs.washington.edu/~wnoble/) (University of Washington)
