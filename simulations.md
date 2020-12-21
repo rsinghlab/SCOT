@@ -1,6 +1,6 @@
 ---
 layout: template
-permalink: /examplessimu/
+permalink: /simulations/
 ---
 ## Example: Replicating SCOT alignment results on SNARE-seq Cell Mixture Data
 
