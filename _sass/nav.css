@@ -1,12 +1,11 @@
 $content-width: 1000px;
 $breakpoint: 800px;
 $nav-height: 70px;
-$nav-background: #262626;
 $nav-font-color: #ffffff;
 $link-hover-color: #2581DC;
 
 nav {
-  float: right;
+  /*float: right;*/
   ul {
     list-style: none;
     margin: 0;
@@ -18,7 +17,7 @@ nav {
         display: block;
         padding: 0 20px;
         line-height: $nav-height;
-        background: $nav-background;
+        /*background: $nav-background;*/
         color: $nav-font-color;
         text-decoration: none;
         &:hover {
@@ -133,7 +132,7 @@ nav {
 
 .navigation {
   height: $nav-height;
-  background: $nav-background;
+  /*background: $nav-background;*/
 }
 
 .nav-container {
