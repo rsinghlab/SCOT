@@ -20,7 +20,7 @@ Here, you can download the data used in the examples in the paper describing SCO
 
 |                                       | Domain 1 | Domain 2 | Notes |
 | --------------------------------------|----------|----------|-------|
-| **SNAREseq** Cell Line Mixture            |[1047 x 19 (chromatin accessibility)](data/snare_chromatin.txt)|[1047 x 10 (gene expression)](data/snare_rna.txt)|Original publication [here](https://www.nature.com/articles/s41587-019-0290-0). Raw data [here](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE126074) |
-| **scGEM** Dataset                         |[177 x 34 (gene expression)](data/scGEM_expression.txt)|[177 x 27 (DNA methylation)](data/scGEM_methylation.txt)|[Original publication [here](https://pubmed.ncbi.nlm.nih.gov/27525975/). Raw data [here](https://www.nature.com/articles/nmeth.3961#Sec11) |
+| **SNAREseq** Cell Line Mixture            |[1047 x 19 (chromatin accessibility)](data/snare_chromatin.txt)|[1047 x 10 (gene expression)](data/snare_rna.txt)|[Original publication](https://www.nature.com/articles/s41587-019-0290-0). [Raw data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE126074) |
+| **scGEM** Dataset                         |[177 x 34 (gene expression)](data/scGEM_expression.txt)|[177 x 27 (DNA methylation)](data/scGEM_methylation.txt)|[Original publication](https://pubmed.ncbi.nlm.nih.gov/27525975/). [Raw data](https://www.nature.com/articles/nmeth.3961#Sec11) |
 
 ##### Don't hesitate to [contact us](rsinghlab.github.io/SCOT/contact) if you have any questions about these datasets.

@@ -1,10 +1,28 @@
-<section class="navigation">
+<div class="navbar">
+  <a href="{{site.baseurl}}/">Overview</a>
+  <a href="{{site.baseurl}}/tutorial">Tutorial</a>
+  <div class="dropdown">
+    <button class="dropbtn">Examples ▾
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      <a href="{{site.baseurl}}/simulations">Simulations</a>
+      <a href="{{site.baseurl}}/examples">Real Data with Continuous Trajectory</a>
+      <a href="{{site.baseurl}}/examples">Real Data with Discrete Clusters</a>
+      <a href="{{site.baseurl}}/examples">Real Data with Unbalanced Clusters</a>
+      <a href="{{site.baseurl}}/examples">Fully Unsupervised Alignment</a>
+    </div>
+  </div>
+  <a href="{{site.baseurl}}/data">Data</a>
+  <a href="{{site.baseurl}}/contact">Contact</a>
+</div>
+<!-- <section class="navigation">
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
   <script src="nav.js"></script>
   <div class="nav-container">
     <nav>
       <div class="nav-mobile">
-        <a id="nav-toggle" href="#!"><span></span></a>
+        <a id="nav-toggle" href=""><span></span></a>
       </div>
       <ul class="nav-list">
         <li>
@@ -14,7 +32,7 @@
           <a href="{{site.baseurl}}/tutorial">Tutorial</a>
         </li>
         <li>
-          <a href="#!">Examples</a>
+          <a href="">Examples</a>
           <ul class="nav-dropdown">
             <li>
               <a href="{{site.baseurl}}/simulations">Simulations</a>
@@ -42,7 +60,8 @@
       </ul>
     </nav>
   </div>
-</section>
+</section> -->
+
 <!-- <div class="nav-bar">
 	<h5 style="text-align: center; color:#f2f2f2 ">
 		<a href="{{site.baseurl}}/"> Overview </a> &nbsp;  &nbsp; | &nbsp;  &nbsp;  
