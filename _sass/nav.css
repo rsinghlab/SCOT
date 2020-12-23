@@ -52,7 +52,7 @@ nav {
   position: absolute;
   top: 0;
   right: 0;
-  background: $nav-background;
+  /*background: $nav-background;*/
   height: $nav-height;
   width: $nav-height;
 }
