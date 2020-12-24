@@ -18,21 +18,7 @@ However, with very few exceptions, applying different sequencing assays on the s
 
 When these single-cell sequencing methods are applied to the same cell population or different populations that are expected to share some underlying biological manifold (e.g. common cell types), we expect there to be some cell-to-cell alignment to recover. SCOT is an unsupervised alignment algorithm that recovers probabilistic correspondences between the cells of different -omic datasets. 
 
-Ho<!-- wever, this is a challenging problem because the process yields disparate datasets.
-
-
- It is appropriate to apply SCOT for multi-omic alignment as long as you have a reason to believe there ... 
-
-SCOT yields probabilistic cell-to-cell correspondences and performs alignment by using Gromov-Wasserstein optimal transport.  
-
-
-The image above shows an example of 
-
-that requires unsupervised alignment algorithms 
-
-First of all, we have no correspondence information between cells , and often, we don’t have that for features either since we just measured different properties of genome in different cells.  So, this process yields disparate datasets with no information on alignment a priori. As a result, we need unsupervised algorithms that will align them without relying on any correspondence information.
- <br>
- -->
+<!-- However, this is a challenging problem because the process yields disparate datasets. It is appropriate to apply SCOT for multi-omic alignment as long as you have a reason to believe there ... SCOT yields probabilistic cell-to-cell correspondences and performs alignment by using Gromov-Wasserstein optimal transport.   The image above shows an example of that requires unsupervised alignment algorithms First of all, we have no correspondence information between cells , and often, we don’t have that for features either since we just measured different properties of genome in different cells.  So, this process yields disparate datasets with no information on alignment a priori. As a result, we need unsupervised algorithms that will align them without relying on any correspondence information. -->
 #### SCOT works in three steps:  
 **1.** It first checks pairwise correlations between samples in each sequencing dataset and constructs k nearest-neighbor (kNN) graphs for each. Based on the shortest distances on these kNN graphs, it computes intra-domain distances.
 **2.** It then optimizes the Gromov-Wasserstein optimal transport formulation to look for a probabilistic sample-wise correspondence matrix between the input datasets.  
