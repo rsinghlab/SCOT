@@ -31,7 +31,7 @@ However, this is a challenging problem that requires an unsupervised computation
 ![](assets/method_overview.png)
 
 ### Why should I prefer SCOT to use on my dataset?
-While there are other alignment tools available, SCOT brings a few advantages that are important in real-world settings:
+While there are other alignment tools available, SCOT brings a few advantages that are important in real-world settings:<br>
 **1.** Most alignment methods are developed for batch integration of single-cell RNA-seq datasets (e.g. scAlign, MNN, Seurat, Harmony) and are [shown to perform poorly on multi-omic alignment tasks](https://academic.oup.com/bioinformatics/article/36/Supplement_1/i48/5870490#206061395), which is fundamentally a different problem. SCOT is specifically designed for and [tested on multi-omic integration tasks](https://www.biorxiv.org/content/10.1101/2020.04.28.066787v2).<br>
 **2.** Many alignment tools (e.g. MAGAN, Seurat) require anchor points or feature-wise correspondence information to perform alignment, which one does not likely to have upon sequencing separate cell populations. SCOT is an **unsupervised** tool and does not require any correspondence information to be known *a priori* in order to perform alignment.<br>
 **3.** Other currently available unsupervised multi-omic alignment tools (UnionCom, MMD-MA, Pamona) require users to perform hyperparameter optimization in order to yield high quality alignments. Without any validation data on correspondences, it is difficult to perform hyperparameter tuning. SCOT provides [a procedure to guide hyperparameter selection in fully unsupervised settings](https://rsinghlab.github.io/SCOT/unsupervised/). <br>
