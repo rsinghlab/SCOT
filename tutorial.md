@@ -26,7 +26,7 @@ import sys
 sys.path.insert(1, 'path_to_SCOT')
 from scot import SCOT
 ```
-SCOT expects datasets to be in `numpy` arrays. If you have your data in text format, you can read in these using the [`numpy.genfromtxt()`]() or [`numpy.loadtxt()`]() functions. Example:<br>
+SCOT expects datasets to be in `numpy` arrays. If you have your data in text format, you can read in these using the [`numpy.genfromtxt()`](https://numpy.org/doc/stable/reference/generated/numpy.genfromtxt.html) or [`numpy.loadtxt()`](https://numpy.org/doc/stable/reference/generated/numpy.loadtxt.html) functions. Example:<br>
 ```python
 import numpy as np 
 domain1= np.genfromtxt("path_to_data_file.txt", delimiter="\t") #Change delimiter according to your text file
@@ -65,8 +65,8 @@ There are two required hyperparameters for performing alignment with SCOT:
 In general, we have found that the algorithm is fairly robust to the choice of `k` and the parameter `e` makes a larger difference. The larger values of `e` disperses the correspondence probabilities across more samples. If you expect to find 1-to-1 correspondences between samples, err towards smaller values of `e`. 
 
 If you are not sure which hyperparameters to set while running SCOT alignment, you have two options: <br>
-**1.** If you have some validation data about the cell-to-cell correspondences between the two domains, you can use these for hyperparameter tuning. For this, take a look at [the hyperparameter tuning example script](https://github.com/rsinghlab/SCOT/blob/master/examples/hyperparameterTuning_example.py).
-**2.** If you don't have any validation data on correspondences, no worries! You can use [the unsupervised hyperparameter finding procedure](), where we use the Gromov-Wasserstein distance as a proxy for graph distances to check for alignment quality as we sweep through different hyperparameter combinations. 
+**1.** If you have some validation data about the cell-to-cell correspondences between the two domains in your dataset, you can use these for hyperparameter tuning. For this, take a look at [the hyperparameter tuning example script](https://github.com/rsinghlab/SCOT/blob/master/examples/hyperparameterTuning_example.py).<br>
+**2.** If you don't have any validation data on correspondences, no worries! You can use [the unsupervised hyperparameter finding procedure](https://rsinghlab.github.io/SCOT/unsupervised/), where we use the Gromov-Wasserstein distance as a proxy for graph distances to check for alignment quality as we sweep through different hyperparameter combinations. <br>
 
 #### Optional parameters for SCOT alignment
 
@@ -74,33 +74,23 @@ align(self, k, e, balanced=True, rho=1e-3, verbose=True, normalize=True, norm="l
 
 | Parameter |       Description     | Default Value | Notes |
 | ----------|-----------------------|---------------|-------------------------|-------|
-| balanced  | Determines whether to perform balanced or unbalanced optimal tranport | (boolean) `False` | By default, we perform balanced transport. However, if you have a reason to believe there will be severe underrepresentation of at least one cell type in one of the domains in comparison to the other, setting this to False will likely yield better alignments. Otherwise, keep at True. | 
+| balanced  | Determines whether to perform balanced or unbalanced optimal tranport | (boolean) `False` | By default, we perform balanced transport. However, if you have a reason to believe there will be severe underrepresentation of at least one cell type in one of the domains in comparison to the other, setting this to False will yield better alignments. Otherwise, keep at True. | 
 |    rho    | Coefficient of the Kullback-Leibler relaxation term in unbalanced OT formulation| `5e-2` | Only need this if you are performing unbalanced OT. 
-|  verbose  | Determines whether to print transport progress (via loss over iterations) while optimizing alignment | (boolean) `True` | 
+|  verbose  | Determines whether to print transport progress (loss over iterations) while optimizing alignment | (boolean) `True` | 
 | normalize | Determines whether to normalize datasets before performing alignment on them. | (boolean) `True` | Empirically, we have found that normalization slightly helps with the resulting alignment quality, so we suggest you keep this `True`.
 | normalize | Determines whether to normalize datasets before performing alignment on them. | (boolean) `True` | Empirically, we have found that normalization slightly helps with the resulting alignment quality, so we suggest you keep this `True`.
 |    norm   | Defines what sort of normalization will be applied on the datasets. Normalization is always performed column-wise. | `l2` | Empirically, we have found that best alignment results are obtained when the pre-processed (via a dimensionality reduction scheme) real world sequencing datasets are l-2 normalized first. Other options: `zscore`, `l1`, and `max`. 
 |  XontoY   | Sets the direction of the barycentric projection. | (boolean) `True` | The direction of the barycentric projection makes very little difference in the quality of the resulting alignment. Generally, it is advisable to project onto the dataset with the more defined clusters. |
 
 
-#### Attributes of SCOT object / information you can access to upon using SCOT aligner:
+#### Attributes of SCOT aligner you can access to:
 The `align` function of SCOT returns the two aligned matrices. However, there is additional information you can access:<br> 
-- `scot.coupling` will yield the probabilistic correspondence (coupling) matrix. The rows of the matrix will correspond to the samples in the first domain (X) and the columns will correspond to the samples in the second domain (Y). The order of the samples is the same as the order in the input datasets.
-- `scot.gwdist` will yield the Gromov-Wasserstein distance between the aligned datasets. This is also internally used when performing fully unsupervised alignment as a proxy for alignment quality.
-- `scot.flag` tells whether the optimization procedure for optimal transport has converged. If it has not (returns `False`), you might need to set the parameter `e` to a higher value. 
-
-
-
-<!-- 
-        self.X=domain1
-        self.y=domain2
- -->
-<!--         self.p= None #empirical probability distribution for domain 1 (X)
-        self.q= None #empirical probability distribution for domain 2 (y)
-
-        self.Xgraph=None #kNN graph of domain 1 (X)
-        self.ygraphh=None #kNN graph of domain 2 (y)
-        self.Cx=None #intra-domain graph distances for domain 1 (X)
-        self.Cy=None #intra-domain graph distances for domain 2 (y)
-
- -->
+- `scot.coupling` will yield the probabilistic correspondence (coupling) matrix. The rows of the matrix will correspond to the samples in the first domain (X) and the columns will correspond to the samples in the second domain (Y). The order of the samples is the same as the order in the input datasets. You can use these correspondence probabilities in your downstream analyses. <br>
+- `scot.gwdist` will yield the Gromov-Wasserstein distance between the aligned datasets. This is also internally used when performing fully unsupervised alignment as a proxy for alignment quality. <br>
+- `scot.flag` tells whether the optimization procedure for optimal transport has converged. The aligner notifies the user with a printed error message if convergence has failed, but one can also check with this flag. If it has not converged (returns `False`), you might need to set the parameter `e` to a higher value. <br>
+- `scot.Xgraph` holds the adjacency matrix of the kNN graph built for the first domain. <br>
+- `scot.ygraph` holds the adjacency matrix of the kNN graph built for the second domain. <br>
+- `scot.Cx` holds the intra-domain distance matrix for the first domain, computed based on shortest distances on the kNN graph. <br>
+- `scot.Cy` holds the intra-domain distance matrix for the second domain, computed based on shortest distances on the kNN graph. <br>
+- `scot.p` corresponds to the marginal probability distribution for the samples in the first domain. We use uniform distribution, treating this as a vector of empirical probabilities for each sample. However, if you have some prior information on the marginal probabilities, please change this after initializing SCOT and before running the alignment. <br>
+- `scot.q` corresponds to the marginal probability distribution for the samples in the second domain. We use uniform distribution, treating this as a vector of empirical probabilities for each sample. However, if you have some prior information on the marginal probabilities, please change this after initializing SCOT and before running the alignment. 
