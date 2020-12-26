@@ -1,6 +1,6 @@
 ---
 layout: template
-permalink: /examplesreal/
+permalink: /unsupervised/
 ---
 ## Example: Replicating SCOT alignment results on SNARE-seq Cell Mixture Data
 
