@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import normalize
 from sklearn.metrics import roc_auc_score, silhouette_samples
 from sklearn.decomposition import PCA
+from sklearn.neighbors import KNeighborsClassifier
 
 def calc_frac_idx(x1_mat,x2_mat):
 	"""
