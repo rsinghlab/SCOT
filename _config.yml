@@ -1,4 +1,5 @@
 theme: jekyll-theme-slate
 title: SCOT - Single-Cell alignment with Optimal Transport
+logo: /assets/logo.png
 description: by Singh Lab @ Brown University CCMB, 2020
 baseurl: /SCOT
