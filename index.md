@@ -21,11 +21,9 @@ This problem requires unsupervised computational methods because the process yie
 ##### SCOT works in three steps:  
 **1.** It initializes marginal probability distributions over the input data using uniform distribution. Then, it checks pairwise correlations between samples in each sequencing dataset and constructs k nearest-neighbor (kNN) graphs for each. Based on the shortest distances on these kNN graphs, it computes intra-domain distances. <br>
 **2.** It then optimizes the Gromov-Wasserstein optimal transport formulation to look for a probabilistic correspondence matrix between the samples of the input datasets that will minimize the Euclidean distances between the intra-domain distance matrices. <br>
-**3.** Using this correspondence matrix, it projects one dataset onto the other via barycentric projection.  
-
+**3.** Using this correspondence matrix, it projects one dataset onto the other via barycentric projection. <br>
 ![](assets/method_overview.png)
-
-### Why should I prefer SCOT to use on my dataset?
+### Why should I prefer to use SCOT on my datasets?
 While there are other alignment tools available, SCOT brings a few advantages that are important in real-world settings:<br>
 **1. High quality multi-omic alignment** <br>
 Most alignment methods are developed for batch integration of single-cell RNA-seq datasets (e.g. [scAlign](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1766-4), [MNN](https://pubmed.ncbi.nlm.nih.gov/29608177/), [Seurat](https://satijalab.org/seurat/archive/v3.1/immune_alignment.html), [Harmony](https://www.nature.com/articles/s41592-019-0619-0), [LIGER](https://www.nature.com/articles/s41596-020-0391-8)) and are [shown to perform poorly on multi-omic alignment tasks](https://academic.oup.com/bioinformatics/article/36/Supplement_1/i48/5870490#206061395), which is fundamentally a different problem. **SCOT is specifically designed for and [tested on multi-omic integration tasks](https://www.biorxiv.org/content/10.1101/2020.04.28.066787v2).**<br>
@@ -37,7 +35,7 @@ Many alignment tools (e.g. [MAGAN](http://proceedings.mlr.press/v80/amodio18a/am
 Other currently available unsupervised multi-omic alignment tools ([UnionCom](https://academic.oup.com/bioinformatics/article/36/Supplement_1/i48/5870490), [MMD-MA](https://jieliu6.github.io/files/mmd-ma.pdf), [Pamona](https://www.biorxiv.org/content/10.1101/2020.11.03.366146v1)) require users to perform hyperparameter optimization in order to yield high quality alignments. Without any validation data on correspondences, it is difficult to perform hyperparameter tuning. **SCOT provides [a procedure to approximately self-tune hyperparameters in fully unsupervised settings](https://rsinghlab.github.io/SCOT/unsupervised/).** <br>
 
 **4. Handling cell type imbalance** <br>
-Through an extension with unbalanced optimal transport, **SCOT is able to [handle cell type imbalance between multi-omic assays](https://rsinghlab.github.io/SCOT/examples_unbalanced).**<br>
+Through an extension with unbalanced optimal transport, **SCOT is able to [handle cell type imbalance between multi-omic assays](https://rsinghlab.github.io/SCOT/unbalanced).**<br>
 
 **5. Computational scalability**<br>
  In comparison to the other unsupervised mutli-omic alignment tools, **SCOT is [computationally scalable to large datasets](https://www.biorxiv.org/content/10.1101/2020.04.28.066787v2.full.pdf).**<br>
