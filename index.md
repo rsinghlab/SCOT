@@ -1,8 +1,8 @@
 ---
 layout: template
+permalink: /
 ---
-
-![](assets/SCOT_logo.png)
+<!-- ![](assets/SCOT_logo.png) -->
 
 ### Welcome to the documentation page for SCOT!
 **SCOT** is an **unsupervised algorithm** for performing cell-to-cell **alignment of single-cell multi-omic datasets**. <br>
