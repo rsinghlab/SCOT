@@ -10,10 +10,10 @@ Here, you can download the data used in the examples in the paper describing SCO
 
 |                                 | Domain 1 | Domain 2 | Notes |
 | --------------------------------|----------|----------|----------
-| **Simulation 1**: Bifurcating Tree  |[300 x 1000](data/s1_mapped1.txt)|[300 x 2000](data/s1_mapped2.txt)| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
-| **Simulation 2**: Swiss Roll        |[300 x 1000](data/s2_mapped1.txt)|[300 x 2000](data/s2_mapped2.txt)| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
-| **Simulation 3**: Circular Frustum  |[300 x 1000](data/s3_mapped1.txt)|[300 x 2000](data/s3_mapped2.txt)| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
-| **Simulation 4**: Synthetic RNA-seq |[5000 x 50](data/s4_splatterX.txt)|[5000 x 500](data/s4_splattery.txt)|Generated using [Splatter](https://bioconductor.org/packages/devel/bioc/vignettes/splatter/inst/doc/splatter.html)|
+| **Simulation 1**: Bifurcating Tree  |[300 x 1000](data/s1_mapped1.txt) [group labels]()|[300 x 2000](data/s1_mapped2.txt)[group labels]()| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
+| **Simulation 2**: Swiss Roll        |[300 x 1000](data/s2_mapped1.txt)[group labels]()|[300 x 2000](data/s2_mapped2.txt)[group labels]()| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
+| **Simulation 3**: Circular Frustum  |[300 x 1000](data/s3_mapped1.txt)[group labels]()|[300 x 2000](data/s3_mapped2.txt)[group labels]()| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
+| **Simulation 4**: Synthetic RNA-seq |[5000 x 50](data/s4_splatterX.txt)[group labels]()|[5000 x 500](data/s4_splattery.txt)[group labels]()|Generated using [Splatter](https://bioconductor.org/packages/devel/bioc/vignettes/splatter/inst/doc/splatter.html)|
 
 #### Real-world Sequencing Datasets:
 **<ins>Note</ins>** that the files in "Domain 1" and "Domain 2" columns of the real sequencing datasets contain data pre-processed according to their original publications (linked in Notes), so they are dimensionality reduced. To get access to the original raw datasets, follow the "Raw data" links.
