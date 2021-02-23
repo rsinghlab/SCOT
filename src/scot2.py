@@ -47,9 +47,9 @@ class SCOT(object):
 	norm: Describes what type of data normalization to use. Available options: "l2", "l1", "max", "zscore". Default= "l2". We have found l2 normalization yields better empirical results with real world single-cell sequencing data.
 	XontoY: Describes the direction of barcentric projection used for alignment. When set to True, projects domain 1 onto domain 2. False does opposite. Direction of projection makes little difference in alignment quality. Default= True.
 	"""
-	def __init__(self, domain1, domain2, normalize=True):
-		self.X=domain1
-		self.y=domain2
+	def __init__(self):
+		self.X=None
+		self.y=None
 
 		self.p= None #empirical probability distribution for domain 1 (X)
 		self.q= None #empirical probability distribution for domain 2 (y)
@@ -196,7 +196,7 @@ class SCOT(object):
 		# 	X_aligned=np.matmul(np.transpose(self.coupling), self.X)
 		# return X_aligned, y_aligned
 
-	def align(self, k, e, balanced=True, rho=1e-3, verbose=True, normalize=True, norm="l2", XontoY=True):
+	def align(self, domain1, domain2, k, e, balanced=True, rho=1e-3, verbose=True, normalize=True, norm="l2", XontoY=True):
 		if normalize:
 			self.normalize(norm=norm)
 		self.init_marginals()
