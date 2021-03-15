@@ -10,9 +10,9 @@ Here, you can download the data used in the examples in the paper describing SCO
 
 |                                 | Domain 1 | Domain 2 | Notes |
 | --------------------------------|----------|----------|----------
-| **Simulation 1**: Bifurcating Tree  |[300 x 1000](data/s1_mapped1.txt) [group labels]()|[300 x 2000](data/s1_mapped2.txt)[group labels]()| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
-| **Simulation 2**: Swiss Roll        |[300 x 1000](data/s2_mapped1.txt)[group labels]()|[300 x 2000](data/s2_mapped2.txt)[group labels]()| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
-| **Simulation 3**: Circular Frustum  |[300 x 1000](data/s3_mapped1.txt)[group labels]()|[300 x 2000](data/s3_mapped2.txt)[group labels]()| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
+| **Simulation 1**: Bifurcating Tree  |[300 x 1000 ](data/s1_mapped1.txt)  [ group labels](data/s1_type1.txt)|[300 x 2000 ](data/s1_mapped2.txt)  [ group labels](data/s1_type2.txt)| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
+| **Simulation 2**: Swiss Roll        |[300 x 1000 ](data/s2_mapped1.txt) [ group labels](data/s2_type1.txt)|[300 x 2000 ](data/s2_mapped2.txt) [ group labels](data/s2_type2.txt)| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
+| **Simulation 3**: Circular Frustum  |[300 x 1000 ](data/s3_mapped1.txt) [ group labels](data/s3_type1.txt)|[300 x 2000 ](data/s3_mapped2.txt) [ group labels](data/s3_type2.txt)| Originally from [here](https://noble.gs.washington.edu/proj/mmd-ma/)|
 | **Simulation 4**: Synthetic RNA-seq |[5000 x 50](data/s4_splatterX.txt)[group labels]()|[5000 x 500](data/s4_splattery.txt)[group labels]()|Generated using [Splatter](https://bioconductor.org/packages/devel/bioc/vignettes/splatter/inst/doc/splatter.html)|
 
 #### Real-world Sequencing Datasets:
@@ -20,8 +20,7 @@ Here, you can download the data used in the examples in the paper describing SCO
 
 |                                       | Domain 1 | Domain 2 | Notes |
 | --------------------------------------|----------|----------|-------|
-| **SNAREseq** Cell Line Mixture            |[1047 x 19 (chromatin accessibility)](data/snare_chromatin.txt)|[1047 x 10 (gene expression)](data/snare_rna.txt)|[Original publication](https://www.nature.com/articles/s41587-019-0290-0). [Raw data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE126074) |
-| **scGEM** Dataset                         |[177 x 34 (gene expression)](data/scGEM_expression.txt)|[177 x 27 (DNA methylation)](data/scGEM_methylation.txt)|[Original publication](https://pubmed.ncbi.nlm.nih.gov/27525975/). [Raw data](https://www.nature.com/articles/nmeth.3961#Sec11) |
-| **sciOmics** Dataset                         |[177 x 34 (gene expression)](data/scGEM_expression.txt)|[177 x 27 (chromatin accessibility)](data/scGEM_methylation.txt)|[Original publication](https://pubmed.ncbi.nlm.nih.gov/27525975/). [Raw data](https://www.nature.com/articles/nmeth.3961#Sec11) |
+| **SNAREseq** Cell Line Mixture            |[1047 x 19 (chromatin accessibility) ](data/snare_chromatin.txt) [ cell types](data/SNAREseq_types.txt)|[1047 x 10 (gene expression) ](data/snare_rna.txt) [ cell types](data/SNAREseq_types.txt)|[Original publication](https://www.nature.com/articles/s41587-019-0290-0). [Raw data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE126074) |
+| **scGEM** Dataset                         |[177 x 34 (gene expression) ](data/scGEM_expression.txt)[ cell types](data/scGEM_typeExpression.txt)|[177 x 27 (DNA methylation) ](data/scGEM_methylation.txt) [ cell types](data/scGEM_typeMethylation.txt)|[Original publication](https://pubmed.ncbi.nlm.nih.gov/27525975/). [Raw data](https://www.nature.com/articles/nmeth.3961#Sec11) |
 
 ##### Don't hesitate to [contact us](rsinghlab.github.io/SCOT/contact) if you have any questions about these datasets.
