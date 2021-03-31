@@ -10,14 +10,10 @@ from ot.bregman import sinkhorn
 from ot.utils import dist, UndefinedParameter
 from ot.optim import cg
 from ot.gromov import init_matrix, gwggrad, gwloss
-import src.utils as ut
+import .utils as ut
 import sys
 
-# We use the unbalanced Gromov-Wasserstein solver (utilising PyTorch) written by Thibault Sejourne 
-# https://github.com/thibsej/unbalanced_gromov_wasserstein
-# Clone the above repo and update below to the corresponding path
-sys.path.insert(0, "/home/zsteve/analysis/unbalanced_gromov_wasserstein/solver")
-from tlb_kl_sinkhorn_solver import TLBSinkhornSolver
+from unbalancedgw import TLBSinkhornSolver
 import torch
 
 def scot(X, y, k, e, rho = 1, mode="connectivity", metric="correlation", XontoY=True, returnCoupling=False, balanced = True):

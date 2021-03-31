@@ -181,11 +181,11 @@ class SCOT(object):
 
         if XontoY:
             y_aligned=self.y
-	    X_weights = np.sum(self.coupling, axis = 1)
+            X_weights = np.sum(self.coupling, axis = 1)
             X_aligned=np.matmul(self.coupling, self.y) / X_weights[:,None]
         else:
             X_aligned=self.X
-	    y_weights = np.sum(self.coupling, axis = 0)
+            y_weights = np.sum(self.coupling, axis = 0)
             y_aligned=np.matmul(np.transpose(self.coupling), self.X) / y_weights[:,None]
         return X_aligned, y_aligned
 
@@ -236,7 +236,7 @@ class SCOT(object):
                     e_plot.append(e)          
        
         if all_values:
-	        # return all values	
+                # return all values     
             return g_plot, k_plot, e_plot
         else:
             # return the parameters corresponding to the lowest gromov-wasserstein distance
