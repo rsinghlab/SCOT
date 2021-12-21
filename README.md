@@ -10,23 +10,23 @@ SCOT is a Python tool for performing unsupervised alignment of single-cell multi
 
 For full documentation, please visit https://rsinghlab.github.io/SCOT/ (currently being updated).  
 
-### SCOT v.2.0
+## SCOT v.2.0
 A few extensions:
 1) Alignment with the unbalanced Gromov-Wasserstein optimal transport formulation to handle cell-type representation disparities (Sejourne et al, 2020)
 2) Multi-modal alignment by picking the anchor domain based on imputation potential of domain-specific nearest neighbor graphs
 3) Different choices for joint embedding/projection
 
-### SCOT v.1.1
+## SCOT v.1.1
 A naive extension to multi-modal alignment, where the first dataset in the input as treated as the anchor to align on. 
 
-### SCOT v.1.0
+## SCOT v.1.0
 Unsupervised single-cell multi-omic integration with Gromov-Wasserstein optimal transport & a self-tuning heuristic for hyperparameter selection
 
 
-#### Citation:
+### Citation:
 We are excited to see any extentions and improvements our work! If you are using code from this repository, please kindly cite our work: 
 
-**For SCOT v.1.0**
+**For SCOT v.1.0:** <br>
 Demetci, P. Santorella, R. Sandstede, B., Noble, W. S., Singh, R. 2020. Gromov-Wasserstein based optimal transport for aligning single-cell multi-omics data. bioRxiv. 2020.04.28.066787; doi: https://doi.org/10.1101/2020.04.28.066787
 **BibTex Citation:**  
 ```
@@ -43,7 +43,7 @@ Demetci, P. Santorella, R. Sandstede, B., Noble, W. S., Singh, R. 2020. Gromov-W
 }
 ```
 
-**For SCOT v.2.0**
+**For SCOT v.2.0:** <br>
 Demetci, P. Santorella, R. Sandstede, B., Noble, W. S., Singh, R. 2021. Unsupervised integration of single-cell multi-omics datasets with disparities in cell-type representation. bioRxiv. 2021.11.09.467903; doi: https://doi.org/10.1101/2021.11.09.467903
 **BibTex Citation:**  
 ```
