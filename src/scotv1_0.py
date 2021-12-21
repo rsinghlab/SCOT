@@ -46,11 +46,7 @@ class SCOT(object):
     """
     def __init__(self, domain1, domain2, normalize=True):
         self.X=domain1
-        if type(domain2) == list:
-            self.y=domain2
-        else:
-            self.y = [domain2]
-        self.num_y = len(self.y)
+        self.y=domain2
 
         self.p= None #empirical probability distribution for domain 1 (X)
         self.q= None #empirical probability distribution for domain 2 (y)
@@ -65,10 +61,10 @@ class SCOT(object):
     # Without any prior information, we set the probabilities to what we observe empirically: uniform over all observed sample
     def init_marginals(self):
         self.p= ot.unif(self.X.shape[0])
-        self.q = [ot.unif(self.y[iy].shape[0]) for iy in range(self.num_y)]
+        self.q = ot.unif(self.y.shape[0])
 
     def init_coupling(self):
-        self.coupling = [np.outer(self.p, self.q[iy]) for iy in range(self.num_y)]
+        self.coupling = np.outer(self.p, self.q)
 
     def normalize(self, norm="l2", bySample=True):
         assert (norm in ["l1","l2","max", "zscore"]), "Norm argument has to be either one of 'max', 'l1', 'l2' or 'zscore'. If you would like to perform another type of normalization, please give SCOT the normalize data and set the argument normalize=False when running the algorithm."
@@ -81,43 +77,24 @@ class SCOT(object):
         if norm=="zscore":
             scaler=StandardScaler()
             self.X=scaler.fit_transform(self.X)
-            self.y=[scaler.fit_transform(self.y[iy]) for iy in range(self.num_y)]
+            self.y=scaler.fit_transform(self.y)
         else:
             self.X=normalize(self.X, norm=norm, axis=axis)
-            self.y = [normalize(self.y[iy], norm=norm, axis=axis) for iy in range(self.num_y)]
+            self.y = normalize(self.y, norm=norm, axis=axis)
 
-    def init_distances(self, k, mode="connectivity", metric="correlation"):
-        self.Cx = []
-        self.Cy = []
-        if type(k) != list:
-            k = [k for i in range(self.num_y)]
-        self.Cx = [ut.get_graph_distance_matrix(self.X, k[iy],  mode, metric) for iy in range(self.num_y)]
-        self.Cy = [ut.get_graph_distance_matrix(self.y[iy], k[iy], mode, metric) for iy in range(self.num_y)]
+    def init_distances(self, k=50, mode="connectivity", metric="correlation"):
+        self.Cx = ut.get_graph_distance_matrix(self.X, k,  mode, metric)
+        self.Cy = ut.get_graph_distance_matrix(self.y, k, mode, metric)
 
-    def entropic_gromov_wasserstein(self, iy, loss_fun, epsilon, rho=0.05, max_iter=1000, tol=1e-9, verbose=False, balanced = True):
+    def entropic_gromov_wasserstein(self, loss_fun="square_loss", epsilon=1e-3, max_iter=1000, tol=1e-9, verbose=False):
         """
         Adapted from POT package using ot.unbalanced.sinkhorn() and ot.gromov.entropic_gromov_wasserstein()
 
-        Returns the gromov-wasserstein transport
-
-        If balanced = True, the function solves the following optimization problem:
-
+        Returns the gromov-wasserstein transport. The function solves the following optimization problem:
         .. math::
             GW = arg\min_T \sum_{i,j,k,l} L(Cx_{i,k},Cy_{j,l})*T_{i,j}*T_{k,l}-\epsilon(H(T))
 
-            s.t. T 1 = p
-
-                 T^T 1= q
-
-                 T\geq 0
-
-        If balanced = False, the function solves the following optimization problem:
-
-        .. math::
-            GW = arg\min_T \sum_{i,j,k,l} L(Cx_{i,k},Cy_{j,l})*T_{i,j}*T_{k,l}-\epsilon(H(T))
-                                + \rho KL(T 1 || p) + \rho KL(T^T 1 || q)
-
-            s.t.  T\geq 0
+           such that: T 1 = p,  T^T 1= q, T \geq 0
 
         Where :
         - Cx : Metric cost matrix in the source space
@@ -129,49 +106,34 @@ class SCOT(object):
 
         Parameters
         ----------
-        Cx : ndarray, shape (ns, ns)
-            Metric cost matrix in the source space
-        Cy : num_y length list of ndarray, shape (nt, nt)
-            Metric costfr matrix in the target space
-        p :  ndarray, shape (ns,)
-            Distribution in the source space
-        q : num_y length list of ndarray, shape (nt,)
-            Distribution in the target space
-        loss_fun :  string
-            Loss function used for the solver either 'square_loss' or 'kl_loss'
-        epsilon : float
-            Regularization term >0
-        rho : float
-            Regularization term > 0
-        max_iter : int, optional
-            Max number of iterations
-        tol : float, optional
-            Stop threshold on error (>0)
-        verbose : bool, optional
-            Print information along iterations
-        balanced: bool, optional
-            Compute balanced or unbalanced GW
+        Cx : ndarray, shape (ns, ns). Metric cost matrix in the source space
+        Cy : num_y length list of ndarray, shape (nt, nt). Metric costfr matrix in the target space
+        p :  ndarray, shape (ns,). Distribution in the source space
+        q : num_y length list of ndarray, shape (nt,). Distribution in the target space
+        loss_fun :  string. Loss function used for the solver either 'square_loss' or 'kl_loss'
+        epsilon : float. Regularization term >0
+        max_iter : int, optional. Max number of iterations
+        tol : float, optional. Stop threshold on error (>0)
+        verbose : bool, optional. Print information along iterations
+        balanced: bool, optional. Compute balanced or unbalanced GW
 
         Returns
         -------
-        T : ndarray, shape (ns, nt)
-            Optimal coupling between the two spaces
+        T : ndarray, shape (ns, nt). Optimal coupling between the two spaces
 
         References
         ----------
-        .. [12] Peyré, Gabriel, Marco Cuturi, and Justin Solomon,
-            "Gromov-Wasserstein averaging of kernel and distance matrices."
+        .. [12] Peyré, Gabriel, Marco Cuturi, and Justin Solomon,. "Gromov-Wasserstein averaging of kernel and distance matrices."
             International Conference on Machine Learning (ICML). 2016.
-
         """
-        self.Cx[iy] = np.asarray(self.Cx[iy], dtype=np.float64)
-        self.Cy[iy] =  np.asarray(self.Cy[iy], dtype=np.float64)
-        T = self.coupling[iy]
-        constC, hCx, hCy = ot.gromov.init_matrix(self.Cx[iy], self.Cy[iy], self.p, self.q[iy], loss_fun)
+        self.Cx = np.asarray(self.Cx, dtype=np.float64)
+        self.Cy =  np.asarray(self.Cy, dtype=np.float64)
+        T = self.coupling
+
+        constC, hCx, hCy = ot.gromov.init_matrix(self.Cx, self.Cy, self.p, self.q, loss_fun)
 
         cpt = 0
         err = 1
-
         log = {'err': []}
 
         while (err > tol and cpt < max_iter):
@@ -179,11 +141,7 @@ class SCOT(object):
 
             # compute the gradient
             tens =ot.gromov.gwggrad(constC, hCx, hCy, T)
-            if balanced:
-                T = ot.bregman.sinkhorn(self.p, self.q[iy], tens, epsilon)
-            else:
-                T = ot.unbalanced.sinkhorn_unbalanced(self.p, self.q[iy], tens, epsilon,
-                                rho, method='sinkhorn', numItermax=max_iter, stopThr=tol, verbose=verbose, log=False)
+            T = ot.bregman.sinkhorn(self.p, self.q, tens, epsilon)
 
             if cpt % 10 == 0:
                 # we can speed up the process by checking for the error only all
@@ -203,30 +161,20 @@ class SCOT(object):
         log['gw_dist'] = ot.gromov.gwloss(constC, hCx, hCy, T) 
         return T, log
 
-    def find_correspondences(self, e, balanced=True, rho=5e-2, verbose=True):
-        self.flag = [True for iy in range(self.num_y)]
-        self.gwdist = [False for iy in range(self.num_y)]
-        if type(e) != list:
-            e = [e for i in range(self.num_y)]
-        if type(rho) != list:
-            rho = [rho for i in range(self.num_y)]
-        for i in range(self.num_y):
-            m, log = self.entropic_gromov_wasserstein(i, loss_fun="square_loss", epsilon=e[i], rho=rho[i],
-                                verbose=verbose, balanced = balanced)
+    def find_correspondences(self, e=1e-3, verbose=True):
+        m, log = self.entropic_gromov_wasserstein(epsilon=e, verbose=verbose)
             # check convergence
-            if ( np.isnan(m).any() or np.isinf(m.any()) ):
-                self.flag[i] = False
+            if (np.isnan(m).any() or np.isinf(m.any())):
+                self.flag = False
             else:
-                self.coupling[i] = m
-                self.gwdist[i] = log['gw_dist']
-        return 
+                self.coupling = m
+                self.gwdist = log['gw_dist']
+        return m
 
     def barycentric_projection(self):
         X_aligned=self.X
-        y_aligned = []
-        for i in range(self.num_y):
-            weights = np.sum(self.coupling[i], axis = 0)
-            y_aligned.append( np.matmul(np.transpose(self.coupling[i]), self.X) / weights[:, None])
+        weights = np.sum(self.coupling, axis = 0)
+        y_aligned= np.matmul(np.transpose(self.coupling), self.X) / weights[:, None]
         return X_aligned, y_aligned
 
     def align(self, k, e, balanced=True, rho=1e-3, verbose=True, normalize=True, norm="l2", init_coupling=True):
@@ -240,8 +188,9 @@ class SCOT(object):
         X_aligned, y_aligned = self.barycentric_projection()
         return X_aligned, y_aligned
 
-    def search_scot(self, ks, es, rhos = [1], balanced = True, all_values = False, normalize=True, norm="l2"):
+    def search_scot(self, ks, es, return_al= False, normalize=True, norm="l2"):
         '''
+        Helper function for unsupervised_scot().
         Performs a hyperparameter sweep for given values of k and epsilon
         Default: return the parameters corresponding to the lowest GW distance
         (Optional): return all k, epsilon, and GW values
@@ -251,58 +200,44 @@ class SCOT(object):
         if normalize:
             self.normalize(norm=norm)
         self.init_marginals()
-        self.init_coupling()
-        X_aligned, y_aligned = self.barycentric_projection()
 
         # store values of k, epsilon, and gw distance
-        total=len(es)*len(ks)*len(rhos)
-        k_plot=np.zeros(total)
-        e_plot=np.zeros(total)
-        rho_plot=np.zeros(total)
-        g_plot=np.zeros((self.num_y, total))
-        gmin = [1 for i in range(self.num_y)]
-        e_best =  [es[0] for i in range(self.num_y)]
-        k_best =  [ks[0] for i in range(self.num_y)]
-        rho_best =  [rhos[0] for i in range(self.num_y)]
+        total=len(es)*len(ks)
+        k_sweep=[]
+        e_sweep=[]
+        g_sweep=[]
 
+        gmin = 1
         counter=0
 
         # search in k first to reduce graph computation
         for k in ks:
             self.init_distances(k)
-            for rho in rhos:
-                self.init_coupling() # reinitialize coupling for new value of epsilon
-                for e in es:
-                    # run scot
-                    self.find_correspondences(e=e, balanced=balanced, rho=rho)
-                    # save values
-                    if self.flag:
-                        k_plot[counter] = k
-                        e_plot[counter] = e
-                        rho_plot[counter] = rho
+            self.init_coupling() # reinitialize coupling for new value of epsilon
+            for e in es:
+                print("Computing alignment with hyperparameter combinations: %s out of %d" %(counter, total))
+                # run scot
+                self.find_correspondences(e=e)
+                # save values
+                if self.flag:
+                    k_sweep.append(k)
+                    e_sweep.append(e)
+                    g_sweep.append(self.gwdist)
 
-                        for i in range(self.num_y):
-                            g_plot[i, counter] = self.gwdist[i]
+                    # save the alignment if it is lower
+                    if self.gwdist < gmin:
+                        X_aligned, y_aligned = self.barycentric_projection()
+                        gmin= self.gwdist
+                        e_best= e
+                        k_best= k
 
-                            # save the alignment if it is lower
-                            if g_plot[i, counter] < gmin[i]:
-                                X_aligned, y_aligned = self.barycentric_projection()
-                                gmin[i] = g_plot[i, counter]
-                                e_best[i] = e
-                                k_best[i] = k
-                                rho_best[i] = rho
-                    
                     counter = counter + 1
-           
-        if all_values:
-            # return alignment and all values
-            return X_aligned, y_aligned, g_plot, k_plot, e_plot, rho_plot
-        else:
-            # return  alignment and the parameters corresponding to the lowest GW distance
-            return X_aligned, y_aligned, gmin, k_best, e_best, rho_best
+            if return_all:
+                return X_aligned, y_aligned, g_sweep, k_sweep, e_sweep 
+            return X_aligned, y_aligned, gmin, k_best, e_best
 
 
-    def unsupervised_scot(self, balanced = True, normalize=True, norm='l2', all_values = False):
+    def unsupervised_scot(self, normalize=True, norm='l2', all_values = False):
         '''
         Unsupervised hyperparameter tuning algorithm to find an alignment
         by using the GW distance as a measure of alignment
@@ -313,19 +248,11 @@ class SCOT(object):
 
         # use k = 20% of # sample or k = 50 if dataset is large
         n = self.X.shape[0]
-        for i in range(self.num_y):
-            if n > self.y[i].shape[0]:
-                n = self.y[i].shape[0]
+        if n > self.y.shape[0]:
+            n = self.y.shape[0]
         k_start = min(n // 5, 50)
-
-        if balanced:
-            num_eps = 12
-            num_k = 5
-            num_rho = 1
-        else:
-            num_eps = 5
-            num_k = 5
-            num_rho = 5
+        num_eps = 12
+        num_k = 5
 
         # define search space
         es = np.logspace(-1, -3, num_eps)
@@ -334,14 +261,12 @@ class SCOT(object):
         else:
             ks = np.linspace(n//20, n//6, num_k)
         ks = ks.astype(int)
-        rhos = np.logspace(-1,-3, num_rho)
-
+        
         # search parameter space
-        X_aligned, y_aligned, g_best, k_best, e_best, rho_best = self.search_scot(ks, 
-            es, rhos, balanced=balanced, all_values=all_values, normalize=False)
+        X_aligned, y_aligned, g_best, k_best, e_best = self.search_scot(ks, es, all_values=all_values, normalize=False)
 
         if all_values:
-            return X_aligned, y_aligned, g_best, k_best, e_best, rho_best
+            return X_aligned, y_aligned, g_best, k_best, e_best
         else:
             return X_aligned, y_aligned
 
