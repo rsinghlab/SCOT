@@ -1,0 +1,8 @@
+#
+# To install these packages togehter, please run `pip install -r requirements.txt`
+#
+
+numpy
+POT
+scipy 
+sklearn
