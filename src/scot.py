@@ -164,7 +164,6 @@ class SCOT(object):
 			self.init_distances()
 			self.find_correspondences(e=e, verbose=verbose)
 
-			print("FLAG", self.flag)
 			if self.flag==False:
 				print("CONVERGENCE ERROR: Optimization procedure runs into numerical errors with the hyperparameters specified. Please try aligning with higher values of epsilon.")
 				return
@@ -242,8 +241,8 @@ class SCOT(object):
 		n = min(self.X.shape[0], self.y.shape[0])
 		k_start = min(n // 5, 50)
 
-		num_eps = 2 #12
-		num_k = 2 #5
+		num_eps = 12
+		num_k = 5
 
 		# define search space
 		es = np.logspace(-1, -3, num_eps)

@@ -2,22 +2,17 @@
 @Author: Pinar Demetci, Rebecca Santorella 2020
 SCOT hyperparameter tuning example script
 """
-import os
-import sys
-sys.path.insert(1, '../src/')
-import utils as ut
-import evals as evals
-import scot2 as sc
-import numpy as np
 
-### Change working directory to /data in order to import the data
-os.chdir("../data/")
+import sys
+# We change the working directory because this is where the source code we want to import exists.
+# This is not needed if you put the source code (scot.py) in the same directory as your scripts. 
+sys.path.insert(1, '../src/')
+from scot import *
+import evals
 
 ### Read and normalize the data:
-X=np.load("scatac_feat.npy")
-y=np.load("scrna_feat.npy")
-X=ut.unit_normalize(X)
-y=ut.unit_normalize(y)
+X=np.genfromtxt("../data/Cheow_expression.csv", delimiter=",")
+y=np.genfromtxt("../data/Cheow_expression.csv", delimiter=",")
 
 ### Set the grid of hyperparameters to try:
 es=[5e-4, 7e-4, 1e-3, 3e-3,  5e-3, 7e-3, 1e-2, 3e-2, 5e-2, 7e-2, 1e-1, 3e-1, 5e-1, 7e-1]
@@ -38,14 +33,14 @@ counter=1
 for e in es:
     for k in ks:
         print(counter," of ", total)
-        X_aligned, y_aligned = scot.align(k, e, normalize = False, XontoY=True)    
-
-        # Record parameters and metrics:
-        all_ks.append(k)
-        all_es.append(e)
+        X_aligned, y_aligned = scot.align(k, e, normalize = True, norm="l2", XontoY=True)    
         
         # check convergence
         if scot.flag:
+            # Record parameters and metrics:
+            all_ks.append(k)
+            all_es.append(e)
+            
             # Use X onto Y projection to calculate mean FOSCTTM:
             FOSCTTM_X=np.mean(evals.calc_domainAveraged_FOSCTTM(X_aligned, y_aligned))
 
@@ -57,11 +52,16 @@ for e in es:
             all_FOSCTTM_y.append(FOSCTTM_y)
             all_GWdist.append(scot.gwdist)
 
-        else: # So that convergence issues don't mislead us to a numerically unstable hyperparameter combination:
-            all_FOSCTTM_X.append(1)
-            all_FOSCTTM_y.append(1)
-            all_GWdist.append(10)
-            
+        else: # If scot.flag is False, it means we had convergence issues for these hyperparameter combination
+            # We do the following so that convergence issues don't mislead us to a numerically unstable hyperparameter combination
+            # Another strategy would be to not include these combinations in our records at all, and just say "pass". 
+            all_FOSCTTM_X.append(1) #Largest FOSCTTM possible
+            all_FOSCTTM_y.append(1) #Largest FOSCTTM possible
+            all_GWdist.append(10) #A very large GW distance
+            # Record parameters and metrics:
+            all_ks.append(k)
+            all_es.append(e)
+
         counter+=1
 
 # Choose the best performing hyperparameter setting in both directions:

@@ -3,29 +3,23 @@
 SCOT hyperparameter tuning example script
 """
 
-import os
 import sys
+# We change the working directory because this is where the source code we want to import exists.
+# This is not needed if you put the source code (scot.py) in the same directory as your scripts. 
 sys.path.insert(1, '../src/')
-import utils as ut
-import evals as evals
-import scot2 as sc
-import numpy as np
-
-### Change working directory to /data in order to import the data
-os.chdir("../data/")
+from scot import *
+import evals
 
 ### Read and normalize the data:
-X=np.load("scatac_feat.npy")
-y=np.load("scrna_feat.npy")
+X=np.load("../data/scatac_feat.npy")
+y=np.load("../data/scrna_feat.npy")
 
 # initialize SCOT object
-scot=sc.SCOT(X, y)
+scot=SCOT(X, y)
 
 # perform unsupervised hyperparameter search
-X_aligned, y_aligned, k_best, e_best = scot.unsupervised_scot(XontoY=False)
-FOSCTTM_y=np.mean(evals.calc_domainAveraged_FOSCTTM(X_aligned, y_aligned))
+X_aligned, y_aligned = scot.align(selfTune=True)
+# Hyperparameter combinations picked automatically prints after the unsupervised sweep 
 
-print("Best performing setting in the y onto X projection direction is:")
-print("k= ",k_best, " epsilon= ",e_best)
-print("with an average FOSCTTM measure of: ", FOSCTTM_y)
-
+FOSCTTM_unsupervised=np.mean(evals.calc_domainAveraged_FOSCTTM(X_aligned, y_aligned))
+print("The average FOSCTTM measure for the unsupervised alignment is: ", FOSCTTM_unsupervised)
