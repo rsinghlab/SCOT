@@ -2,7 +2,7 @@
 ![](assets/SCOT_logo.png)
 
 # Single-Cell alignment using Optimal Transport (SCOT)
-* **Note:** We are currently updating this repository with compertmantalized versions of the algorithm due to the new development of v.2.0.
+* **Note:** We are currently updating this repository with compertmantalized versions of the algorithm due to the new development of v.2.0. Please look for the release of v2.0 version for SCOTv2.
 
 SCOT is a Python tool for performing unsupervised alignment of single-cell multi-omics datasets. Its methodology is detailed in the following two papers:
 - SCOT v.1.0: [Gromov-Wasserstein based optimal transport for aligning single-cell multi-omics data](https://www.biorxiv.org/content/10.1101/2020.04.28.066787v2)
