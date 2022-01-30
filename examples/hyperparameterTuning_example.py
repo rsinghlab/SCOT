@@ -11,12 +11,12 @@ from scot import *
 import evals
 
 ### Read and normalize the data:
-X=np.genfromtxt("../data/Cheow_expression.csv", delimiter=",")
-y=np.genfromtxt("../data/Cheow_expression.csv", delimiter=",")
+X=np.genfromtxt("../data/scGEM_expression.csv", delimiter=",")
+y=np.genfromtxt("../data/scGEM_expression.csv", delimiter=",")
 
 ### Set the grid of hyperparameters to try:
 es=[5e-4, 7e-4, 1e-3, 3e-3,  5e-3, 7e-3, 1e-2, 3e-2, 5e-2, 7e-2, 1e-1, 3e-1, 5e-1, 7e-1]
-ks=[5,10,20,30,40,50,60,70, 80,90,100]
+ks=[5, 10,20,30,40,50,60,70, 80,90,100]
 total=len(es)*len(ks) #total number of hyperparameters
 
 ### Initialize lists for recording:
@@ -27,7 +27,7 @@ all_FOSCTTM_y=[]
 all_GWdist=[]
 
 # initialize SCOT object
-scot=sc.SCOT(X, y)
+scot=SCOT(X, y)
 
 counter=1
 for e in es:
@@ -53,8 +53,11 @@ for e in es:
             all_GWdist.append(scot.gwdist)
 
         else: # If scot.flag is False, it means we had convergence issues for these hyperparameter combination
-            # We do the following so that convergence issues don't mislead us to a numerically unstable hyperparameter combination
-            # Another strategy would be to not include these combinations in our records at all, and just say "pass". 
+            # We do the following to record large FOSCTTM and GWdist values so that convergence issues don't mislead us to a numerically unstable hyperparameter combination
+            # Alternatively, you can comment out everything here and just write "pass" as to not record any numerically unstable configurations at all:
+
+            #pass
+
             all_FOSCTTM_X.append(1) #Largest FOSCTTM possible
             all_FOSCTTM_y.append(1) #Largest FOSCTTM possible
             all_GWdist.append(10) #A very large GW distance
@@ -78,8 +81,8 @@ print("with an average FOSCTTM measure of: ", all_FOSCTTM_y[index_y])
 
 # Save these lists (if desired) so we can investigate correlations, trends, spread of metrics etc:
 # (could also turn into a matrix or dictionary and save that way so there aren't too many files)
-np.save("snare_tuning_es.npy", all_es)
-np.save("snare_tuning_ks.npy", all_ks)
-np.save("snare_tuning_FOSCTTM_X.npy", all_FOSCTTM_X)
-np.save("snare_tuning_FOSCTTM_y.npy", all_FOSCTTM_y)
-np.save("snare_tuning_GWdist.npy", all_GWdist)
+np.save("../data/scGEM_tuning_es.npy", all_es)
+np.save("../data/scGEM_tuning_ks.npy", all_ks)
+np.save("../data/scGEM_tuning_FOSCTTM_X.npy", all_FOSCTTM_X)
+np.save("../data/scGEM_tuning_FOSCTTM_y.npy", all_FOSCTTM_y)
+np.save("../data/scGEM_tuning_GWdist.npy", all_GWdist)
