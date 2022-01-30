@@ -20,6 +20,7 @@ E-mail: `pinar_demetci@brown.edu`, `pinardemetci@gmail.com`, `rebecca_santorella
 
 Basic use:
 ```{python} 
+from scot import *
 # Given two numpy matrices, domain1 and domain2, where the rows are cells and columns are different genomic features:
 scot= SCOT(domain1, domain2)
 aligned_domain1, aligned_domain2 = scot.align(k=50, e=1e-3)
