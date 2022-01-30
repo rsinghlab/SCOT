@@ -21,12 +21,12 @@ E-mail: `pinar_demetci@brown.edu`, `pinardemetci@gmail.com`, `rebecca_santorella
 Basic use:
 ```{python} 
 # Given two numpy matrices, domain1 and domain2, where the rows are cells and columns are different genomic features:
-	scot= SCOT(domain1, domain2)
-	aligned_domain1, aligned_domain2 = scot.align(k=50, e=1e-3)
+scot= SCOT(domain1, domain2)
+aligned_domain1, aligned_domain2 = scot.align(k=50, e=1e-3)
 
-	#If you can't pick the parameters k and e, you can try out our unsupervised self-tuning heuristic by running:
-	scot= SCOT(domain1, domain2)
-	aligned_domain1, aligned_domain2 = scot.align(selfTune=True)
+#If you can't pick the parameters k and e, you can try out our unsupervised self-tuning heuristic by running:
+scot= SCOT(domain1, domain2)
+aligned_domain1, aligned_domain2 = scot.align(selfTune=True)
 ```
 **Required parameters for the `align` method:**
 - *k:* Number of neighbors to be used when constructing kNN graphs. Default= min(min(n_1, n_2), 50), where n_i, for i=1,2 corresponds to the number of samples in the i^th domain.
