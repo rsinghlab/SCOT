@@ -1,0 +1,10 @@
+#
+# To install these packages together, please run `pip install -r requirements.txt`
+#
+
+numpy
+Cython
+POT
+scipy 
+sklearn
+torch

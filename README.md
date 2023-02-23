@@ -2,18 +2,17 @@
 ![](assets/SCOT_logo.png)
 
 # Single-Cell alignment using Optimal Transport (SCOT)
-* **Note:** We are currently updating this repository with compertmantalized versions of the algorithm due to the new development of v.2.0.
 
 SCOT is a Python tool for performing unsupervised alignment of single-cell multi-omics datasets. Its methodology is detailed in the following two papers:
-- SCOT v.1.0: [Gromov-Wasserstein based optimal transport for aligning single-cell multi-omics data](https://www.biorxiv.org/content/10.1101/2020.04.28.066787v2)
-- SCOT v.2.0: [Unsupervised integration of single-cell multi-omics datasets with disparities in cell-type representation](https://www.biorxiv.org/content/10.1101/2021.11.09.467903v1)
+- SCOT v.1.0 (in src/scotv1.py): [Gromov-Wasserstein based optimal transport for aligning single-cell multi-omics data](https://www.biorxiv.org/content/10.1101/2020.04.28.066787v2)
+- SCOT v.2.0 (in src/scotv2.py): [Unsupervised integration of single-cell multi-omics datasets with disparities in cell-type representation](https://www.biorxiv.org/content/10.1101/2021.11.09.467903v1)
 
 For full documentation, please visit https://rsinghlab.github.io/SCOT/ (currently being updated).  
 
 ## SCOT v.1.0
 Unsupervised single-cell multi-omic integration with Gromov-Wasserstein optimal transport & a self-tuning heuristic for hyperparameter selection.
 
-***THIS ARCHIVE CONTAINS SCOT v.1.0***<br>
+***THIS ARCHIVE CONTAINS BOTH SCOT v.1.0 AND SCOT v.2.0***<br>
 Usage: All dependencies are recorded in `requirements.txt`. You can install them together with `pip install requirements.txt`.<br>
 Jupyter notebooks to replicate the results from the manuscript are in the folder `/replication`. These also give examples for how to use SCOT. Scripts in `/examples` contain sample scripts for unsupervised and supervised hyperparameter selection. <br>
 
@@ -21,7 +20,10 @@ E-mail: `pinar_demetci@brown.edu`, `pinardemetci@gmail.com`, `rebecca_santorella
 
 Basic use:
 ```{python} 
-from scot import *
+from scotv1 import *
+# or
+from scotv2 import * 
+
 # Given two numpy matrices, domain1 and domain2, where the rows are cells and columns are different genomic features:
 scot= SCOT(domain1, domain2)
 aligned_domain1, aligned_domain2 = scot.align(k=50, e=1e-3)
