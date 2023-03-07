@@ -58,7 +58,7 @@ class SCOTv2(object):
 
 	def __init__(self, data):
 
-		assert type(data)==list and len(datasets)>=2, "As input, SCOTv2 requires a list, containing at least two numpy arrays to be aligned.  \
+		assert type(data)==list and len(data)>=2, "As input, SCOTv2 requires a list, containing at least two numpy arrays to be aligned.  \
 				Each numpy array/matrix corresponds to a dataset, with samples (cells) in rows and features (latent representations or genomic features) in columns. \
 				We recommend using latent representations (e.g. principal components for RNA-seq and topics - via cisTopic- for ATAC-seq/Methyl-seq)."
 		self.data=data
@@ -193,6 +193,8 @@ class SCOTv2(object):
 				lcost = (lcost+ rho2* torch.sum(nu * (nu / b + 1e-10).log()))
 			ecost = (-lcost /(mp * eps)).exp()
 
+			if (i%10)==0:
+				print("Unbalanced GW step:", i)
 			#compute the coupling via sinkhorn
 			up, vp, pi = self._exp_sinkhorn_solver(ecost, up, vp, a, b, mp, eps, rho, rho2,nits_sinkhorn, tol_sinkhorn)
 			
@@ -211,11 +213,12 @@ class SCOTv2(object):
 			self._normalize(norm=norm, bySample=bySample)
 		# Initialize inputs for (unbalanced) Gromov-Wasserstein optimal transport:
 		self._init_marginals()
+		print("computing intra-domain graph distances")
 		self.construct_graph(k=k, mode=mode, metric=metric)
 		self.init_graph_distances()
 		# Run pairwise dataset alignments:
 		for i in range(len(self.data)-1):
-			print("Aligning datasets #s and #s" % (0, i+1))
+			print("running pairwise dataset alignments")
 			a,b =torch.Tensor(self.marginals[0]), torch.Tensor(self.marginals[i+1])
 			dx, dy= torch.Tensor(self.graphDists[0]), torch.Tensor(self.graphDists[i+1])
 			coupling, flag=self.exp_unbalanced_gw(a, dx, b, dy, eps=eps, rho=rho, rho2=rho2, nits_plan=3000, tol_plan=1e-6, nits_sinkhorn=3000, tol_sinkhorn=1e-6)
@@ -229,9 +232,10 @@ class SCOTv2(object):
 
 	def barycentric_projection(self):
 		aligned_datasets=[self.data[0]]
-		for i in range(len(self.data)-1):
-			weights=np.sum(self.couplings[i], axis = 0)
-			projected_data=np.matmul(self.couplings[i], self.data[i+1]) / weights[:, None]
+		for i in range(0,len(self.couplings)):
+			coupling=np.transpose(self.couplings[i].numpy())
+			weights=np.sum(coupling, axis = 1)
+			projected_data=np.matmul((coupling/ weights[:, None]), self.data[0])
 			aligned_datasets.append(projected_data)
 		return aligned_datasets
 
@@ -300,9 +304,10 @@ class SCOTv2(object):
 		return integrated_data
 
 	def align(self,normalize=True, norm="l2", bySample=True, k=20, mode= "connectivity", metric="correlation",  eps=0.01, rho=1.0, rho2=None, projMethod="embedding", Lambda=1.0, out_dim=10):
-		assert projMethod in ["embedding", "berycentric"], "The input to the parameter 'projMethod' needs to be one of \
+		assert projMethod in ["embedding", "barycentric"], "The input to the parameter 'projMethod' needs to be one of \
 								'embedding' (if co-embedding them in a new shared space) or 'barycentric' (if using barycentric projection)"
 		self.find_correspondences(normalize=normalize, norm=norm, bySample=bySample, k=k, mode=mode, metric=metric,  eps=eps, rho=rho, rho2=rho2)
+		print("FLAGS", self.flags)
 		if projMethod=="embedding":
 			integrated_data=self.coembed_datasets(Lambda=Lambda, out_dim=out_dim)
 		else:
@@ -310,29 +315,15 @@ class SCOTv2(object):
 		self.integrated_data=integrated_data
 		return integrated_data
 	
-	def align(self, k=None, e=1e-3, mode="connectivity", metric="correlation", verbose=True, normalize=True, norm="l2", XontoY=True, selfTune=False, init_marginals=True):
-		if normalize:
-			self.normalize(norm=norm)
-		if init_marginals:
-			self.init_marginals()
+# X=np.load("../data/SNARE/SNAREseq_atac_feat.npy")[0:1000,:]
+# Y=np.load("../data/SNARE/SNAREseq_rna_feat.npy")
+# print(X.shape, Y.shape)
+# SCOT=SCOTv2([Y,X])
+# aligned_datasets=SCOT.align(normalize=True, k=50, eps=0.005, rho=0.1, projMethod="barycentric")
+# print(len(aligned_datasets))
+# print(aligned_datasets[0].shape)
+# print(aligned_datasets[1].shape)
+# # np.save("aligned_atac.npy", aligned_datasets[1])
+# np.save("aligned_rna.npy", aligned_datasets[0])
 
-		if selfTune:
-			X_aligned, y_aligned= self.unsupervised_scot()
-		else:
-			if k==None:
-				k=min((int(self.X.shape[0]*0.2), int(self.y.shape[0]*0.2)),50)
-
-			self.construct_graph(k, mode= "connectivity", metric="correlation")
-			self.init_distances()
-			self.find_correspondences(e=e, verbose=verbose)
-
-			if self.flag==False:
-				print("CONVERGENCE ERROR: Optimization procedure runs into numerical errors with the hyperparameters specified. Please try aligning with higher values of epsilon.")
-				return
-			
-			else:
-				X_aligned, y_aligned = self.barycentric_projection(XontoY=XontoY)
-
-		self.X_aligned, self.y_aligned=X_aligned, y_aligned
-		return self.X_aligned, self.y_aligned
 
