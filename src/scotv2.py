@@ -262,14 +262,14 @@ class SCOTv2(object):
 		Sigma_x = []
 		Sigma_y = []
 		for i in range(n_datasets-1):
-			Sigma_y.append(np.diag(np.dot(np.transpose(np.ones(np.shape(self.coupling[i])[0])), self.coupling[i])))
-			Sigma_x.append(np.diag(np.dot(self.coupling[i], np.ones(np.shape(self.coupling[i])[1]))))
+			Sigma_y.append(np.diag(np.dot(np.transpose(np.ones(np.shape(self.couplings[i])[0])), self.couplings[i])))
+			Sigma_x.append(np.diag(np.dot(self.couplings[i], np.ones(np.shape(self.couplings[i])[1]))))
 
-		S_xy = coupling[0]
+		S_xy = self.couplings[0]
 		S_xx = L[0] + Lambda*Sigma_x[0]
 		S_yy = L[-1] +Lambda*Sigma_y[0]
 		for i in range(1, n_datasets-1):
-			S_xy = np.vstack((S_xy, self.coupling[i]))
+			S_xy = np.vstack((S_xy, self.couplings[i]))
 			S_xx = block_diag(S_xx, L[i] + Lambda*Sigma_x[i])
 			S_yy = S_yy + Lambda*Sigma_y[i]
 
@@ -288,9 +288,9 @@ class SCOTv2(object):
 
 		num = [0]
 		for i in range(n_datasets-1):
-			num.append(num[i]+len(data[i]))
+			num.append(num[i]+len(self.data[i]))
 
-		U, V = U[:,:output_dim], np.transpose(V)[:,:output_dim]
+		U, V = U[:,:out_dim], np.transpose(V)[:,:out_dim]
 
 		fx = np.dot(H_x, U)
 		fy = np.dot(H_y, V)
