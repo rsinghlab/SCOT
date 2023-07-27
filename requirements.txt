@@ -1,10 +1,10 @@
 #
-# To install these packages together, please run `pip install -r requirements.txt`
+# To install these packages together, please run `pip3 install -r requirements.txt`
 #
 
 numpy
 Cython
 POT
 scipy 
-sklearn
+scikit-learn
 torch
