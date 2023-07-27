@@ -133,7 +133,7 @@ class SCOT(object):
 		if XontoY:
 			#Projecting the first domain onto the second domain
 			self.y_aligned=self.y
-			weights=np.sum(self.coupling, axis = 0)
+			weights=np.sum(self.coupling, axis = 1)
 			self.X_aligned=np.matmul(self.coupling, self.y) / weights[:, None]
 		else:
 			#Projecting the second domain onto the first domain
